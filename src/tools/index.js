@@ -13,6 +13,7 @@ export const tools = [
   },
   {
     ...getCommonCodeByQueryTool,
-    description: "사용자 질의에 따라 적합한 공통코드를 조회합니다.",
+    description:
+      "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다.",
   },
 ];

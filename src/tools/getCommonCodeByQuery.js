@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { scheduleService } from "../services/scheduleService.js";
+import { packageService } from "../services/packageService.js";
 
 export const getCommonCodeByQueryTool = {
   name: "getCommonCodeByQuery",
@@ -7,7 +7,7 @@ export const getCommonCodeByQueryTool = {
   inputSchema: { query: z.string().min(1) },
   async handler({ query }) {
     try {
-      const result = await scheduleService.getCommonCodeByQuery(query);
+      const result = await packageService.getCommonCodeByQuery(query);
       return {
         content: [
           {

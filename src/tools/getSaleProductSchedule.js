@@ -1,6 +1,6 @@
 // src/tools/getSaleProductSchedule.js
 import { z } from "zod";
-import { scheduleService } from "../services/scheduleService.js";
+import { packageService } from "../services/packageService.js";
 
 export const getSaleProductScheduleTool = {
   name: "getSaleProductSchedule",
@@ -11,7 +11,7 @@ export const getSaleProductScheduleTool = {
       console.log(
         `Executing getSaleProductSchedule tool for saleProdCd: ${saleProdCd}`
       );
-      const schedules = await scheduleService.getSchedules(saleProdCd);
+      const schedules = await packageService.getSchedules(saleProdCd);
       const responseData = {
         saleProdCd: saleProdCd,
         schedules: schedules,
