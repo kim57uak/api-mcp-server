@@ -4,24 +4,13 @@
 
 import axios from "axios";
 import logger from '../utils/logger.cjs';
+import { apiUrls, codeMappings, defaultApiParams } from '../config/serviceConfig.js';
 
-const BASE_URL = "http://pkgapiqa.hanatour.com:8082";
-const OLS_BASE_URL = "http://pkgolsdev.hanatour.com:8081";
-const COMMON_OLS_BASE_URL = "http://comolsdev.hanatour.com:8081";
-
-const CODE_MAP = [
-  { code: "PROD_ATTR_CD", keywords: ["속성", "product attribute"] },
-  {
-    code: "AREA_CD",
-    keywords: ["지역 or 국가 or대륙코드", "area or country or continent"],
-  },
-  { code: "PROD_BRND_CD", keywords: ["브랜드", "brand"] },
-];
-
-function findBestCodeByQuery(query) {
+// Modified findBestCodeByQuery to accept codeMap as a parameter
+function findBestCodeByQuery(query, codeMap) {
   const lowerQuery = query.toLowerCase();
-  console.log("lowerQuery : ", lowerQuery);
-  for (const { code, keywords } of CODE_MAP) {
+  console.log("lowerQuery : ", lowerQuery); // Existing console.log
+  for (const { code, keywords } of codeMap) { // Use the passed codeMap
     if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
       return code;
     }
@@ -34,7 +23,7 @@ export const packageService = {
     logger.info(`Executing getSchedules with params: ${JSON.stringify({ saleProdCd })}`);
     try {
       // 실제 API 호출
-      const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/${saleProdCd}/schedules`;
+      const url = `${apiUrls.packageApiBase}/api/v2/platform/pkg/sale-products/${saleProdCd}/schedules`;
       const res = await axios.get(url);
       logger.info(`getSchedules completed successfully with result: ${JSON.stringify(res.data)}`);
       return res.data;
@@ -49,7 +38,7 @@ export const packageService = {
     logger.info(`Executing updateSchedule with params: ${JSON.stringify({ saleProdCd, name })}`);
     try {
       // 실제 API 호출
-      const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/schedules/update`;
+      const url = `${apiUrls.packageApiBase}/api/v2/platform/pkg/sale-products/schedules/update`;
       const res = await axios.post(url, { saleProdCd, name });
       logger.info(`updateSchedule completed successfully with result: ${JSON.stringify(res.data)}`);
       return res.data;
@@ -62,14 +51,14 @@ export const packageService = {
   getCommonCodeByQuery: async (query) => {
     logger.info(`Executing getCommonCodeByQuery with params: ${JSON.stringify({ query })}`);
     try {
-      const code = findBestCodeByQuery(query);
+      const code = findBestCodeByQuery(query, codeMappings.codeMapArray); // Pass the map
       if (!code) throw new Error("적합한 코드를 찾을 수 없습니다.");
 
-      const url = `${COMMON_OLS_BASE_URL}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
+      const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
       const res = await axios.post(url, {
         comBscCd: code,
         header: {
-          langCode: "ko-KR",
+          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
         },
       });
       const result = { code, data: res.data };

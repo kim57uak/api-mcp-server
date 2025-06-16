@@ -1,20 +1,22 @@
-# MCP Sale Product Server - Developer Manual
+# 📄 MCP Sale Product Server - Developer Manual
 
-This document provides a detailed overview of the MCP Sale Product Server's architecture, components, and development guidelines.
+This document provides a detailed overview of the **MCP Sale Product Server's** architecture, components, and development guidelines.
 
-## 1. Project Overview
+## 1. 📄 Project Overview
 
-The MCP Sale Product Server is a Node.js application built using the Model Context Protocol (MCP) SDK. It exposes tools to manage sales product schedules. The server is designed with SOLID principles in mind to ensure maintainability and scalability.
+The **MCP Sale Product Server** is a `Node.js` application built using the **Model Context Protocol (MCP) SDK**. It exposes tools to manage sales product schedules. The server is designed with **SOLID principles** in mind to ensure maintainability and scalability.
 
-## 2. Project Structure
+## 2. 🧱 Project Structure
 
 The project follows a modular structure:
 
-```
+```text
 mcp-server/
 ├── logs/              # Log files (gitignored)
 ├── node_modules/      # Project dependencies (managed by npm)
 ├── src/               # Source code
+│   ├── config/        # Configuration files
+│   │   └── serviceConfig.js # Service-specific configurations
 │   ├── server.js      # Main server initialization and connection logic
 │   ├── tools/         # MCP tool definitions
 │   │   ├── getSaleProductSchedule.js
@@ -25,7 +27,7 @@ mcp-server/
 │   ├── transports/    # Transport layer configurations
 │   │   └── stdioTransport.js
 │   ├── utils/         # Utility functions
-│   │   └── logger.js    # Logging utility
+│   │   └── logger.cjs    # Logging utility (Note: .cjs extension)
 ├── .gitignore         # Specifies intentionally untracked files that Git should ignore
 ├── DEVELOPER_MANUAL.md # This file
 ├── INSTALL.md         # Installation guide for users
@@ -33,7 +35,7 @@ mcp-server/
 └── package-lock.json  # Records exact versions of dependencies
 ```
 
-### Key Components:
+### 🔑 Key Components:
 
 *   **`src/server.js`**:
     *   Initializes the `McpServer` instance from the `@modelcontextprotocol/sdk`.
@@ -43,17 +45,25 @@ mcp-server/
     *   Contains top-level error handling for server connection.
 
 *   **`src/tools/`**:
-    *   Each file (e.g., `getSaleProductSchedule.js`) defines a specific MCP tool.
+    *   Each file (e.g., `getSaleProductSchedule.js`) defines a specific **MCP tool**.
     *   A tool definition is an object with `name`, `description`, `inputSchema` (using `zod` for validation), and an `async handler` function.
-    *   Tool handlers are responsible for:
+    *   **Tool handlers** are responsible for:
         1.  Receiving input validated against `inputSchema`.
         2.  Calling appropriate service methods from `src/services/` to perform business logic.
         3.  Formatting the response for the MCP client.
         4.  Basic error handling (`try...catch`) to return structured error messages.
     *   `src/tools/index.js` aggregates all tool definitions and exports them as an array, which `server.js` consumes.
 
+*   **`src/config/serviceConfig.js`**:
+    *   This file centralizes configurations for services, primarily `packageService.js`.
+    *   It exports objects like `apiUrls`, `codeMappings`, and `defaultApiParams`.
+    *   `apiUrls` includes base URLs for external APIs. These can be overridden by environment variables (e.g., `PKG_API_BASE_URL`).
+    *   `codeMappings` contains mappings used by business logic, like the `codeMapArray` for `getCommonCodeByQuery`.
+    *   `defaultApiParams` holds default parameters for API calls, like `commonCodeLang`.
+    *   This approach allows for easier management of settings and environment-specific configurations without altering the service logic.
+
 *   **`src/services/`**:
-    *   Contains modules responsible for business logic. For example, `packageService.js` handles business logic related to package schedules and common code retrieval. It includes functions like `getSchedules`, `updateSchedule`, and `getCommonCodeByQuery`.
+    *   Contains modules responsible for business logic. For example, `packageService.js` handles business logic related to package schedules and common code retrieval. It now imports its API endpoints and other operational parameters from `src/config/serviceConfig.js`, making it more configurable. It includes functions like `getSchedules()`, `updateSchedule()`, and `getCommonCodeByQuery()`.
     *   Services are designed to be independent of the MCP transport layer and can be reused.
     *   They perform data retrieval, updates, and any complex computations.
 
@@ -62,13 +72,13 @@ mcp-server/
 
 *   **`src/utils/`**:
     *   Contains common utility functions. Currently includes a logging module.
-    *   **`logger.js`**: Implements a configurable logging system using the `winston` library. It supports logging to both the console (with colors) and a rotating file (`logs/app.log`). Log entries include timestamps, log levels, and messages. Functions across services and tools utilize this logger.
+    *   **`logger.cjs`**: Implements a configurable logging system using the `winston` library (*Note: `.cjs` extension*). It supports logging to both the console (with colors) and a rotating file (`logs/app.log`). Log entries include timestamps, log levels, and messages. Functions across services and tools utilize this logger.
 
-## 3. MCP Tool Implementation
+## 3. 🔧 MCP Tool Implementation
 
-### 3.1. `getSaleProductSchedule` Tool (`src/tools/getSaleProductSchedule.js`)
+### 3.1. 🛠️ `getSaleProductSchedule` Tool (`src/tools/getSaleProductSchedule.js`)
 
-*   **Purpose**: Retrieves sales product schedules based on a `saleProdCd`. (Original description: "판매상품 일정을 판매상품코드로 조회합니다.")
+*   **Purpose**: Retrieves sales product schedules based on a `saleProdCd`. (*Original description: "판매상품 일정을 판매상품코드로 조회합니다."*)
 *   **Input Schema** (`zod`):
     ```javascript
     { saleProdCd: z.string().min(1) } // saleProdCd must be a non-empty string
@@ -89,9 +99,9 @@ mcp-server/
     }
     ```
 
-### 3.2. `updateSaleProductSchedule` Tool (`src/tools/updateSaleProductSchedule.js`)
+### 3.2. 🛠️ `updateSaleProductSchedule` Tool (`src/tools/updateSaleProductSchedule.js`)
 
-*   **Purpose**: Updates a sales product schedule. (Original description: "판매 상품 스케줄을 수정합니다.")
+*   **Purpose**: Updates a sales product schedule. (*Original description: "판매 상품 스케줄을 수정합니다."*)
 *   **Input Schema** (`zod`):
     ```javascript
     { name: z.string().min(1), saleProdCd: z.string().min(1) } // name and saleProdCd must be non-empty strings
@@ -112,9 +122,9 @@ mcp-server/
     }
     ```
 
-### 3.3. `getCommonCodeByQuery` Tool (`src/tools/getCommonCodeByQuery.js`)
+### 3.3. 🛠️ `getCommonCodeByQuery` Tool (`src/tools/getCommonCodeByQuery.js`)
 
-*   **Purpose**: Retrieves common codes (like attribute, region, country, continent, brand codes) based on a user query. (Original description: "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다.")
+*   **Purpose**: Retrieves common codes (like attribute, region, country, continent, brand codes) based on a user query. (*Original description: "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다."*)
 *   **Input Schema** (`zod`):
     ```javascript
     { query: z.string().min(1) } // query must be a non-empty string
@@ -135,16 +145,25 @@ mcp-server/
     }
     ```
 
-## 4. SOLID Principles Application
+## 4. ⚙️ Configuration Management
 
-The server aims to adhere to SOLID principles:
+The application's configurations, especially for service integrations, are managed centrally.
+
+*   **Key configuration files**:
+    *   `src/config/serviceConfig.js`: Details specific configurations for `packageService.js` such as API base URLs (which can be overridden by environment variables like `PKG_API_BASE_URL`, `OLS_BASE_URL`, `COMMON_OLS_BASE_URL`), keyword-to-code mappings (`codeMappings.codeMapArray`), and default API parameters (`defaultApiParams`). Modifying this file or setting the respective environment variables allows for changes in how services connect to external systems or apply certain business rules.
+*   Environment variables can be used to override certain settings, particularly API URLs, for different deployment environments (development, staging, production).
+
+## 5. 💪 SOLID Principles Application
+
+The server aims to adhere to **SOLID principles**:
 
 *   **Single Responsibility Principle (SRP)**:
     *   `server.js`: Manages server lifecycle and tool registration.
     *   Tool files (`src/tools/*.js`): Define MCP interface, input validation, and delegate to services.
     *   Service files (`src/services/*.js`): Encapsulate specific business logic.
     *   Transport files (`src/transports/*.js`): Manage transport configuration.
-    *   `src/utils/logger.js`: Manages the cross-cutting concern of logging.
+    *   `src/utils/logger.cjs`: Manages the cross-cutting concern of logging (*Note: `.cjs` extension*).
+    *   `src/config/serviceConfig.js`: Centralizes service configurations, promoting separation of concerns.
 
 *   **Open/Closed Principle (OCP)**:
     *   New tools can be added to `src/tools/` and registered in `src/tools/index.js` without modifying existing tool files or `server.js` core logic.
@@ -160,9 +179,9 @@ The server aims to adhere to SOLID principles:
     *   Tool handlers depend on abstractions (the `packageService` interface) rather than concrete implementations directly. While JavaScript doesn't have explicit interfaces like TypeScript or Java, the service modules are loosely coupled.
     *   `server.js` depends on the `createStdioTransport` abstraction rather than directly instantiating `StdioServerTransport` from the SDK.
 
-## 5. Adding a New MCP Tool
+## 6. ✨ Adding a New MCP Tool
 
-1.  **Define the Tool Logic (Service - Optional but Recommended)**:
+1.  **Define the Tool Logic (Service - *Optional but Recommended*)**:
     *   If the tool involves new business logic, first add relevant functions to an existing service in `src/services/` or create a new service file (e.g., `src/services/newFeatureService.js`).
     *   Write unit tests for your service logic.
 
@@ -183,26 +202,26 @@ The server aims to adhere to SOLID principles:
             param2: z.number().optional(),
           },
           async handler({ param1, param2 }) { // Destructure validated inputs
-            // import logger from '../utils/logger.js'; // (adjust path)
-            // logger.info(`Executing myNewToolName with ${JSON.stringify(arguments)});
+            // import logger from '../utils/logger.cjs'; // (adjust path, e.g. ../../utils/logger.cjs for tools in subdirs)
+            // logger.info(`Executing myNewToolName with ${JSON.stringify({ param1, param2 })}`);
             try {
               // Your tool logic here
               // Example: const result = await myService.process(param1, param2);
               console.log(`Executing myNewTool with param1: ${param1}, param2: ${param2}`);
+              // const result = { message: `Result for ${param1}` };
+              // logger.info(`myNewToolName completed successfully with result: ${JSON.stringify(result)}`);
               return {
                 content: [{ type: "text", text: `Result for ${param1}` }],
               };
             } catch (error) {
               console.error(`Error in myNewTool: ${error.message}`, error);
               // logger.error(`Error in myNewToolName: ${error.message}`, { error: error.stack });
-              return {
-                content: [{ type: "json", json: { error: "Failed to execute myNewTool", details: error.message } }],
-              };
+              throw error; // Or return structured error
             }
           },
         };
         ```
-    *   Integrate logging: Import and use the logger from `src/utils/logger.js` within the handler to log entry, parameters, results, and errors.
+    *   **Integrate logging**: Import and use the logger from `src/utils/logger.cjs` within the `handler` to log entry, parameters, results, and errors.
 
 3.  **Register the Tool**:
     *   Open `src/tools/index.js`.
@@ -219,15 +238,15 @@ The server aims to adhere to SOLID principles:
           myNewTool, // Add to array
         ];
         ```
-    The server will automatically pick up and register the new tool upon restart.
+    > **Note**: Remember to restart the server after adding a new tool for changes to take effect.
 
-## 6. Running and Testing
+## 7. 🚀 Running and Testing
 
 Refer to `INSTALL.MD` for instructions on running the server.
 
-For testing tools manually (if using StdioTransport and a compatible MCP client):
+For testing tools manually (if using `StdioTransport` and a compatible MCP client):
 1. Run the server (`node src/server.js`).
-2. Send MCP requests in JSON format via stdin, for example:
+2. Send MCP requests in JSON format via `stdin`, for example:
    To call `getSaleProductSchedule`:
    ```json
    {
@@ -242,12 +261,12 @@ For testing tools manually (if using StdioTransport and a compatible MCP client)
      "inputs": { "name": "New Test Name", "saleProdCd": "TEST002" }
    }
    ```
-   Observe the JSON output on stdout.
+   Observe the JSON output on `stdout`.
 
-## 7. Future Enhancements
+## 8. 🌱 Future Enhancements
 
 *   **Database Integration**: Replace mock services in `src/services/` with actual database interactions.
 *   **Unit and Integration Tests**: Implement a comprehensive test suite.
-*   **Enhanced Logging**: While a robust logging system is now in place (Winston, file/console output), future enhancements could include structured logging for easier parsing by log management systems, or dynamic log level changes via configuration/API.
-*   **Configuration Management**: Externalize configuration (e.g., API keys, database URLs).
+*   **Enhanced Logging**: While a robust logging system is now in place (`Winston`, file/console output), future enhancements could include structured logging for easier parsing by log management systems, or dynamic log level changes via configuration/API.
+*   **Refined Configuration Management**: While `serviceConfig.js` centralizes some configurations, further externalization (e.g., to `.env` files fully managed outside the codebase, or dedicated configuration services) could be explored for more complex applications, especially for sensitive data or more varied deployment environments.
 *   **More Sophisticated Error Handling**: Custom error classes, more granular error codes.
