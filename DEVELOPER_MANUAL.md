@@ -12,6 +12,7 @@ The project follows a modular structure:
 
 ```
 mcp-server/
+├── logs/              # Log files (gitignored)
 ├── node_modules/      # Project dependencies (managed by npm)
 ├── src/               # Source code
 │   ├── server.js      # Main server initialization and connection logic
@@ -20,10 +21,11 @@ mcp-server/
 │   │   ├── updateSaleProductSchedule.js
 │   │   └── index.js   # Exports all tools
 │   ├── services/      # Business logic modules
-│   │   └── scheduleService.js
+│   │   └── packageService.js
 │   ├── transports/    # Transport layer configurations
 │   │   └── stdioTransport.js
-│   └── utils/         # Utility functions (currently empty)
+│   ├── utils/         # Utility functions
+│   │   └── logger.js    # Logging utility
 ├── .gitignore         # Specifies intentionally untracked files that Git should ignore
 ├── DEVELOPER_MANUAL.md # This file
 ├── INSTALL.md         # Installation guide for users
@@ -51,7 +53,7 @@ mcp-server/
     *   `src/tools/index.js` aggregates all tool definitions and exports them as an array, which `server.js` consumes.
 
 *   **`src/services/`**:
-    *   Contains modules responsible for business logic. For example, `scheduleService.js` handles operations related to product schedules (currently mocked).
+    *   Contains modules responsible for business logic. For example, `packageService.js` handles business logic related to package schedules and common code retrieval. It includes functions like `getSchedules`, `updateSchedule`, and `getCommonCodeByQuery`.
     *   Services are designed to be independent of the MCP transport layer and can be reused.
     *   They perform data retrieval, updates, and any complex computations.
 
@@ -59,61 +61,76 @@ mcp-server/
     *   Modules for creating and configuring transport instances. `stdioTransport.js` provides a standard I/O transport. This separation allows for easier addition or modification of transport layers in the future.
 
 *   **`src/utils/`**:
-    *   Intended for common utility functions that can be used across the application.
+    *   Contains common utility functions. Currently includes a logging module.
+    *   **`logger.js`**: Implements a configurable logging system using the `winston` library. It supports logging to both the console (with colors) and a rotating file (`logs/app.log`). Log entries include timestamps, log levels, and messages. Functions across services and tools utilize this logger.
 
 ## 3. MCP Tool Implementation
 
 ### 3.1. `getSaleProductSchedule` Tool (`src/tools/getSaleProductSchedule.js`)
 
-*   **Purpose**: Retrieves sales product schedules based on a `saleProdCd`.
+*   **Purpose**: Retrieves sales product schedules based on a `saleProdCd`. (Original description: "판매상품 일정을 판매상품코드로 조회합니다.")
 *   **Input Schema** (`zod`):
     ```javascript
     { saleProdCd: z.string().min(1) } // saleProdCd must be a non-empty string
     ```
 *   **Handler Logic**:
-    1.  Receives `saleProdCd` as input.
-    2.  Calls `scheduleService.getSchedules(saleProdCd)` to fetch schedule data.
-    3.  Formats the data into the MCP content structure (type `json`).
-    4.  Returns the formatted content or an error object if an exception occurs.
+    1.  Logs entry, parameters, results, and errors to both console and file using the central logger.
+    2.  Receives `saleProdCd` as input.
+    3.  Calls `packageService.getSchedules(saleProdCd)` to fetch schedule data.
+    4.  Formats the data into the MCP content structure (type `text`).
+    5.  Returns the formatted content or an error object if an exception occurs.
 *   **Output (Success Example)**:
     ```json
     {
       "content": [{
-        "type": "json",
-        "json": {
-          "saleProdCd": "ALLLSLSLSL",
-          "schedules": [
-            { "id": "schedule1", "time": "2024-07-30T10:00:00Z", "event": "Event A (from service)" },
-            { "id": "schedule2", "time": "2024-07-31T14:30:00Z", "event": "Event B (from service)" }
-          ],
-          "retrievedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
-        }
+        "type": "text",
+        "text": "{\n  \"saleProdCd\": \"ALLLSLSLSL\",\n  \"schedules\": [\n    { \"id\": \"schedule1\", \"time\": \"2024-07-30T10:00:00Z\", \"event\": \"Event A (from service)\" },\n    { \"id\": \"schedule2\", \"time\": \"2024-07-31T14:30:00Z\", \"event\": \"Event B (from service)\" }\n  ],\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
       }]
     }
     ```
 
 ### 3.2. `updateSaleProductSchedule` Tool (`src/tools/updateSaleProductSchedule.js`)
 
-*   **Purpose**: Updates a sales product schedule.
+*   **Purpose**: Updates a sales product schedule. (Original description: "판매 상품 스케줄을 수정합니다.")
 *   **Input Schema** (`zod`):
     ```javascript
     { name: z.string().min(1), saleProdCd: z.string().min(1) } // name and saleProdCd must be non-empty strings
     ```
 *   **Handler Logic**:
-    1.  Receives `name` and `saleProdCd` as input.
-    2.  Calls `scheduleService.updateSchedule(saleProdCd, name)` to perform the update.
-    3.  Returns a JSON response indicating success or failure.
-    4.  Includes an error object if an exception occurs.
+    1.  Logs entry, parameters, results, and errors to both console and file using the central logger.
+    2.  Receives `name` and `saleProdCd` as input.
+    3.  Calls `packageService.updateSchedule(saleProdCd, name)` to perform the update.
+    4.  Returns a JSON response indicating success or failure.
+    5.  Includes an error object if an exception occurs.
 *   **Output (Success Example)**:
     ```json
     {
       "content": [{
-        "type": "json",
-        "json": {
-          "status": "success",
-          "message": "Schedule for ALLLSLSLSL updated with name name_1. Service status: Updated via service",
-          "updatedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
-        }
+        "type": "text",
+        "text": "{\n  \"status\": \"success\",\n  \"message\": \"Schedule for ALLLSLSLSL updated with name name_1. Service status: Updated via service\",\n  \"updatedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.3. `getCommonCodeByQuery` Tool (`src/tools/getCommonCodeByQuery.js`)
+
+*   **Purpose**: Retrieves common codes (like attribute, region, country, continent, brand codes) based on a user query. (Original description: "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다.")
+*   **Input Schema** (`zod`):
+    ```javascript
+    { query: z.string().min(1) } // query must be a non-empty string
+    ```
+*   **Handler Logic**:
+    1.  Logs entry, parameters, results, and errors to both console and file using the central logger.
+    2.  Receives `query` as input.
+    3.  Calls `packageService.getCommonCodeByQuery(query)` to fetch common code data.
+    4.  Formats the data as a JSON string within the MCP content structure (type `text`).
+    5.  Returns the formatted content or an error object if an exception occurs.
+*   **Output (Success Example)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"code\": \"PROD_ATTR_CD\",\n  \"data\": { \"example\": [\"code1\", \"code2\"] }\n}"
       }]
     }
     ```
@@ -127,6 +144,7 @@ The server aims to adhere to SOLID principles:
     *   Tool files (`src/tools/*.js`): Define MCP interface, input validation, and delegate to services.
     *   Service files (`src/services/*.js`): Encapsulate specific business logic.
     *   Transport files (`src/transports/*.js`): Manage transport configuration.
+    *   `src/utils/logger.js`: Manages the cross-cutting concern of logging.
 
 *   **Open/Closed Principle (OCP)**:
     *   New tools can be added to `src/tools/` and registered in `src/tools/index.js` without modifying existing tool files or `server.js` core logic.
@@ -139,7 +157,7 @@ The server aims to adhere to SOLID principles:
     *   The MCP tool definitions themselves act as specific interfaces for clients. Clients only need to know about the tools they use.
 
 *   **Dependency Inversion Principle (DIP)**:
-    *   Tool handlers depend on abstractions (the `scheduleService` interface) rather than concrete implementations directly. While JavaScript doesn't have explicit interfaces like TypeScript or Java, the service modules are loosely coupled.
+    *   Tool handlers depend on abstractions (the `packageService` interface) rather than concrete implementations directly. While JavaScript doesn't have explicit interfaces like TypeScript or Java, the service modules are loosely coupled.
     *   `server.js` depends on the `createStdioTransport` abstraction rather than directly instantiating `StdioServerTransport` from the SDK.
 
 ## 5. Adding a New MCP Tool
@@ -165,6 +183,8 @@ The server aims to adhere to SOLID principles:
             param2: z.number().optional(),
           },
           async handler({ param1, param2 }) { // Destructure validated inputs
+            // import logger from '../utils/logger.js'; // (adjust path)
+            // logger.info(`Executing myNewToolName with ${JSON.stringify(arguments)});
             try {
               // Your tool logic here
               // Example: const result = await myService.process(param1, param2);
@@ -174,6 +194,7 @@ The server aims to adhere to SOLID principles:
               };
             } catch (error) {
               console.error(`Error in myNewTool: ${error.message}`, error);
+              // logger.error(`Error in myNewToolName: ${error.message}`, { error: error.stack });
               return {
                 content: [{ type: "json", json: { error: "Failed to execute myNewTool", details: error.message } }],
               };
@@ -181,6 +202,7 @@ The server aims to adhere to SOLID principles:
           },
         };
         ```
+    *   Integrate logging: Import and use the logger from `src/utils/logger.js` within the handler to log entry, parameters, results, and errors.
 
 3.  **Register the Tool**:
     *   Open `src/tools/index.js`.
@@ -226,6 +248,6 @@ For testing tools manually (if using StdioTransport and a compatible MCP client)
 
 *   **Database Integration**: Replace mock services in `src/services/` with actual database interactions.
 *   **Unit and Integration Tests**: Implement a comprehensive test suite.
-*   **Logging**: Enhance logging with a dedicated library (e.g., Winston, Pino).
+*   **Enhanced Logging**: While a robust logging system is now in place (Winston, file/console output), future enhancements could include structured logging for easier parsing by log management systems, or dynamic log level changes via configuration/API.
 *   **Configuration Management**: Externalize configuration (e.g., API keys, database URLs).
 *   **More Sophisticated Error Handling**: Custom error classes, more granular error codes.

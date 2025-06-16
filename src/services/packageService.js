@@ -3,6 +3,7 @@
 // In a real application, this service would handle data fetching, validation, etc.
 
 import axios from "axios";
+import logger from '../utils/logger.cjs';
 
 const BASE_URL = "http://pkgapiqa.hanatour.com:8082";
 const OLS_BASE_URL = "http://pkgolsdev.hanatour.com:8081";
@@ -30,39 +31,53 @@ function findBestCodeByQuery(query) {
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
-    // 실제 API 호출
-    const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/${saleProdCd}/schedules`;
+    logger.info(`Executing getSchedules with params: ${JSON.stringify({ saleProdCd })}`);
     try {
+      // 실제 API 호출
+      const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/${saleProdCd}/schedules`;
       const res = await axios.get(url);
+      logger.info(`getSchedules completed successfully with result: ${JSON.stringify(res.data)}`);
       return res.data;
-    } catch (err) {
-      console.error("[Service] GET API 호출 실패:", err.message);
-      throw err;
+    } catch (error) {
+      logger.error(`Error in getSchedules: ${error.message}`, { error: error.stack });
+      // console.error("[Service] GET API 호출 실패:", err.message); // Original console log
+      throw error;
     }
   },
 
   updateSchedule: async (saleProdCd, name) => {
-    // 실제 API 호출
-    const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/schedules/update`;
+    logger.info(`Executing updateSchedule with params: ${JSON.stringify({ saleProdCd, name })}`);
     try {
+      // 실제 API 호출
+      const url = `${BASE_URL}/api/v2/platform/pkg/sale-products/schedules/update`;
       const res = await axios.post(url, { saleProdCd, name });
+      logger.info(`updateSchedule completed successfully with result: ${JSON.stringify(res.data)}`);
       return res.data;
-    } catch (err) {
-      console.error("[Service] POST API 호출 실패:", err.message);
-      throw err;
+    } catch (error) {
+      logger.error(`Error in updateSchedule: ${error.message}`, { error: error.stack });
+      // console.error("[Service] POST API 호출 실패:", err.message); // Original console log
+      throw error;
     }
   },
   getCommonCodeByQuery: async (query) => {
-    const code = findBestCodeByQuery(query);
-    if (!code) throw new Error("적합한 코드를 찾을 수 없습니다.");
+    logger.info(`Executing getCommonCodeByQuery with params: ${JSON.stringify({ query })}`);
+    try {
+      const code = findBestCodeByQuery(query);
+      if (!code) throw new Error("적합한 코드를 찾을 수 없습니다.");
 
-    const url = `${COMMON_OLS_BASE_URL}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
-    const res = await axios.post(url, {
-      comBscCd: code,
-      header: {
-        langCode: "ko-KR",
-      },
-    });
-    return { code, data: res.data };
+      const url = `${COMMON_OLS_BASE_URL}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
+      const res = await axios.post(url, {
+        comBscCd: code,
+        header: {
+          langCode: "ko-KR",
+        },
+      });
+      const result = { code, data: res.data };
+      logger.info(`getCommonCodeByQuery completed successfully with result: ${JSON.stringify(result)}`);
+      return result;
+    } catch (error) {
+      logger.error(`Error in getCommonCodeByQuery: ${error.message}`, { error: error.stack });
+      throw error;
+    }
   },
 };
