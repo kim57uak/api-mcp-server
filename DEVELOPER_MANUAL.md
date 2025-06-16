@@ -1,0 +1,231 @@
+# MCP Sale Product Server - Developer Manual
+
+This document provides a detailed overview of the MCP Sale Product Server's architecture, components, and development guidelines.
+
+## 1. Project Overview
+
+The MCP Sale Product Server is a Node.js application built using the Model Context Protocol (MCP) SDK. It exposes tools to manage sales product schedules. The server is designed with SOLID principles in mind to ensure maintainability and scalability.
+
+## 2. Project Structure
+
+The project follows a modular structure:
+
+```
+mcp-server/
+├── node_modules/      # Project dependencies (managed by npm)
+├── src/               # Source code
+│   ├── server.js      # Main server initialization and connection logic
+│   ├── tools/         # MCP tool definitions
+│   │   ├── getSaleProductSchedule.js
+│   │   ├── updateSaleProductSchedule.js
+│   │   └── index.js   # Exports all tools
+│   ├── services/      # Business logic modules
+│   │   └── scheduleService.js
+│   ├── transports/    # Transport layer configurations
+│   │   └── stdioTransport.js
+│   └── utils/         # Utility functions (currently empty)
+├── .gitignore         # Specifies intentionally untracked files that Git should ignore
+├── DEVELOPER_MANUAL.md # This file
+├── INSTALL.md         # Installation guide for users
+├── package.json       # Project metadata and dependencies
+└── package-lock.json  # Records exact versions of dependencies
+```
+
+### Key Components:
+
+*   **`src/server.js`**:
+    *   Initializes the `McpServer` instance from the `@modelcontextprotocol/sdk`.
+    *   Imports tool definitions from `src/tools/index.js`.
+    *   Registers each tool with the server.
+    *   Creates and connects the transport layer (e.g., `StdioServerTransport`).
+    *   Contains top-level error handling for server connection.
+
+*   **`src/tools/`**:
+    *   Each file (e.g., `getSaleProductSchedule.js`) defines a specific MCP tool.
+    *   A tool definition is an object with `name`, `description`, `inputSchema` (using `zod` for validation), and an `async handler` function.
+    *   Tool handlers are responsible for:
+        1.  Receiving input validated against `inputSchema`.
+        2.  Calling appropriate service methods from `src/services/` to perform business logic.
+        3.  Formatting the response for the MCP client.
+        4.  Basic error handling (`try...catch`) to return structured error messages.
+    *   `src/tools/index.js` aggregates all tool definitions and exports them as an array, which `server.js` consumes.
+
+*   **`src/services/`**:
+    *   Contains modules responsible for business logic. For example, `scheduleService.js` handles operations related to product schedules (currently mocked).
+    *   Services are designed to be independent of the MCP transport layer and can be reused.
+    *   They perform data retrieval, updates, and any complex computations.
+
+*   **`src/transports/`**:
+    *   Modules for creating and configuring transport instances. `stdioTransport.js` provides a standard I/O transport. This separation allows for easier addition or modification of transport layers in the future.
+
+*   **`src/utils/`**:
+    *   Intended for common utility functions that can be used across the application.
+
+## 3. MCP Tool Implementation
+
+### 3.1. `getSaleProductSchedule` Tool (`src/tools/getSaleProductSchedule.js`)
+
+*   **Purpose**: Retrieves sales product schedules based on a `saleProdCd`.
+*   **Input Schema** (`zod`):
+    ```javascript
+    { saleProdCd: z.string().min(1) } // saleProdCd must be a non-empty string
+    ```
+*   **Handler Logic**:
+    1.  Receives `saleProdCd` as input.
+    2.  Calls `scheduleService.getSchedules(saleProdCd)` to fetch schedule data.
+    3.  Formats the data into the MCP content structure (type `json`).
+    4.  Returns the formatted content or an error object if an exception occurs.
+*   **Output (Success Example)**:
+    ```json
+    {
+      "content": [{
+        "type": "json",
+        "json": {
+          "saleProdCd": "ALLLSLSLSL",
+          "schedules": [
+            { "id": "schedule1", "time": "2024-07-30T10:00:00Z", "event": "Event A (from service)" },
+            { "id": "schedule2", "time": "2024-07-31T14:30:00Z", "event": "Event B (from service)" }
+          ],
+          "retrievedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
+        }
+      }]
+    }
+    ```
+
+### 3.2. `updateSaleProductSchedule` Tool (`src/tools/updateSaleProductSchedule.js`)
+
+*   **Purpose**: Updates a sales product schedule.
+*   **Input Schema** (`zod`):
+    ```javascript
+    { name: z.string().min(1), saleProdCd: z.string().min(1) } // name and saleProdCd must be non-empty strings
+    ```
+*   **Handler Logic**:
+    1.  Receives `name` and `saleProdCd` as input.
+    2.  Calls `scheduleService.updateSchedule(saleProdCd, name)` to perform the update.
+    3.  Returns a JSON response indicating success or failure.
+    4.  Includes an error object if an exception occurs.
+*   **Output (Success Example)**:
+    ```json
+    {
+      "content": [{
+        "type": "json",
+        "json": {
+          "status": "success",
+          "message": "Schedule for ALLLSLSLSL updated with name name_1. Service status: Updated via service",
+          "updatedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
+        }
+      }]
+    }
+    ```
+
+## 4. SOLID Principles Application
+
+The server aims to adhere to SOLID principles:
+
+*   **Single Responsibility Principle (SRP)**:
+    *   `server.js`: Manages server lifecycle and tool registration.
+    *   Tool files (`src/tools/*.js`): Define MCP interface, input validation, and delegate to services.
+    *   Service files (`src/services/*.js`): Encapsulate specific business logic.
+    *   Transport files (`src/transports/*.js`): Manage transport configuration.
+
+*   **Open/Closed Principle (OCP)**:
+    *   New tools can be added to `src/tools/` and registered in `src/tools/index.js` without modifying existing tool files or `server.js` core logic.
+    *   New services can be added similarly.
+
+*   **Liskov Substitution Principle (LSP)**:
+    *   While not heavily demonstrated with inheritance yet, service interfaces (implicit in JavaScript) are intended to be substitutable if different implementations were needed (e.g., mock service vs. real database service).
+
+*   **Interface Segregation Principle (ISP)**:
+    *   The MCP tool definitions themselves act as specific interfaces for clients. Clients only need to know about the tools they use.
+
+*   **Dependency Inversion Principle (DIP)**:
+    *   Tool handlers depend on abstractions (the `scheduleService` interface) rather than concrete implementations directly. While JavaScript doesn't have explicit interfaces like TypeScript or Java, the service modules are loosely coupled.
+    *   `server.js` depends on the `createStdioTransport` abstraction rather than directly instantiating `StdioServerTransport` from the SDK.
+
+## 5. Adding a New MCP Tool
+
+1.  **Define the Tool Logic (Service - Optional but Recommended)**:
+    *   If the tool involves new business logic, first add relevant functions to an existing service in `src/services/` or create a new service file (e.g., `src/services/newFeatureService.js`).
+    *   Write unit tests for your service logic.
+
+2.  **Create the Tool Definition File**:
+    *   Create a new JavaScript file in `src/tools/` (e.g., `src/tools/myNewTool.js`).
+    *   Import `z` from `zod` for schema validation.
+    *   Import any necessary services.
+    *   Define and export the tool object:
+        ```javascript
+        import { z } from "zod";
+        // import { myService } from "../services/myService.js"; // If needed
+
+        export const myNewTool = {
+          name: "myNewToolName", // Unique tool name
+          description: "A brief description of what the tool does.",
+          inputSchema: { // Define input parameters and their types/validation
+            param1: z.string(),
+            param2: z.number().optional(),
+          },
+          async handler({ param1, param2 }) { // Destructure validated inputs
+            try {
+              // Your tool logic here
+              // Example: const result = await myService.process(param1, param2);
+              console.log(`Executing myNewTool with param1: ${param1}, param2: ${param2}`);
+              return {
+                content: [{ type: "text", text: `Result for ${param1}` }],
+              };
+            } catch (error) {
+              console.error(`Error in myNewTool: ${error.message}`, error);
+              return {
+                content: [{ type: "json", json: { error: "Failed to execute myNewTool", details: error.message } }],
+              };
+            }
+          },
+        };
+        ```
+
+3.  **Register the Tool**:
+    *   Open `src/tools/index.js`.
+    *   Import your new tool.
+    *   Add it to the `tools` array:
+        ```javascript
+        import { getSaleProductScheduleTool } from "./getSaleProductSchedule.js";
+        import { updateSaleProductScheduleTool } from "./updateSaleProductSchedule.js";
+        import { myNewTool } from "./myNewTool.js"; // Import new tool
+
+        export const tools = [
+          getSaleProductScheduleTool,
+          updateSaleProductScheduleTool,
+          myNewTool, // Add to array
+        ];
+        ```
+    The server will automatically pick up and register the new tool upon restart.
+
+## 6. Running and Testing
+
+Refer to `INSTALL.MD` for instructions on running the server.
+
+For testing tools manually (if using StdioTransport and a compatible MCP client):
+1. Run the server (`node src/server.js`).
+2. Send MCP requests in JSON format via stdin, for example:
+   To call `getSaleProductSchedule`:
+   ```json
+   {
+     "tool": "getSaleProductSchedule",
+     "inputs": { "saleProdCd": "TEST001" }
+   }
+   ```
+   To call `updateSaleProductSchedule`:
+   ```json
+   {
+     "tool": "updateSaleProductSchedule",
+     "inputs": { "name": "New Test Name", "saleProdCd": "TEST002" }
+   }
+   ```
+   Observe the JSON output on stdout.
+
+## 7. Future Enhancements
+
+*   **Database Integration**: Replace mock services in `src/services/` with actual database interactions.
+*   **Unit and Integration Tests**: Implement a comprehensive test suite.
+*   **Logging**: Enhance logging with a dedicated library (e.g., Winston, Pino).
+*   **Configuration Management**: Externalize configuration (e.g., API keys, database URLs).
+*   **More Sophisticated Error Handling**: Custom error classes, more granular error codes.
