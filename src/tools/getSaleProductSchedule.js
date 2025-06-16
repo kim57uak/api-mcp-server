@@ -8,7 +8,9 @@ export const getSaleProductScheduleTool = {
   inputSchema: { saleProdCd: z.string().min(1) },
   async handler({ saleProdCd }) {
     try {
-      console.log(`Executing getSaleProductSchedule tool for saleProdCd: ${saleProdCd}`);
+      console.log(
+        `Executing getSaleProductSchedule tool for saleProdCd: ${saleProdCd}`
+      );
       const schedules = await scheduleService.getSchedules(saleProdCd);
       const responseData = {
         saleProdCd: saleProdCd,
@@ -16,18 +18,32 @@ export const getSaleProductScheduleTool = {
         retrievedAt: new Date().toISOString(),
       };
       return {
-        content: [{ type: "json", json: responseData }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(responseData, null, 2),
+          },
+        ],
       };
     } catch (error) {
-      console.error(`Error in getSaleProductSchedule tool: ${error.message}`, error);
+      console.error(
+        `Error in getSaleProductSchedule tool: ${error.message}`,
+        error
+      );
       return {
-        content: [{
-          type: "json", // Or type: "error" if MCP SDK supports/prefers it
-          json: {
-            error: "Failed to get schedule",
-            details: error.message,
-          }
-        }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                error: "Failed to get schedule",
+                details: error.message,
+              },
+              null,
+              2
+            ),
+          },
+        ],
       };
     }
   },

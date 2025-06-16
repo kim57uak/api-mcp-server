@@ -8,28 +8,45 @@ export const updateSaleProductScheduleTool = {
   inputSchema: { name: z.string().min(1), saleProdCd: z.string().min(1) },
   async handler({ name, saleProdCd }) {
     try {
-      console.log(`Executing updateSaleProductSchedule tool for name: ${name}, saleProdCd: ${saleProdCd}`);
+      console.log(
+        `Executing updateSaleProductSchedule tool for name: ${name}, saleProdCd: ${saleProdCd}`
+      );
       const result = await scheduleService.updateSchedule(saleProdCd, name);
       return {
-        content: [{
-          type: "json",
-          json: {
-            status: result.success ? "success" : "failure",
-            message: `Schedule for ${saleProdCd} updated with name ${name}. Service status: ${result.message}`,
-            updatedAt: new Date().toISOString(),
-          }
-        }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                status: result.success ? "success" : "failure",
+                message: `Schedule for ${saleProdCd} updated with name ${name}. Service status: ${result.message}`,
+                updatedAt: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
       };
     } catch (error) {
-      console.error(`Error in updateSaleProductSchedule tool: ${error.message}`, error);
+      console.error(
+        `Error in updateSaleProductSchedule tool: ${error.message}`,
+        error
+      );
       return {
-        content: [{
-          type: "json", // Or type: "error"
-          json: {
-            error: "Failed to update schedule",
-            details: error.message,
-          }
-        }],
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                error: "Failed to update schedule",
+                details: error.message,
+              },
+              null,
+              2
+            ),
+          },
+        ],
       };
     }
   },

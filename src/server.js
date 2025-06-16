@@ -4,12 +4,12 @@ import { tools } from "./tools/index.js"; // Import tools
 
 async function main() {
   const server = new McpServer({
-    name: "MCP Sale Product Server",
+    name: "MCP HNT Package Sale Product Server",
     version: "1.0.0",
   });
 
   // Register tools
-  tools.forEach(tool => {
+  tools.forEach((tool) => {
     server.tool(tool.name, tool.description, tool.inputSchema, tool.handler);
   });
 
