@@ -2,23 +2,18 @@ import { z } from "zod";
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 
-export const getCommonCodeByQueryTool = {
-  name: "getCommonCodeByQuery",
-  description: "사용자 질의에 따라 적합한 공통코드를 조회합니다.",
+export const getBasicCommonCodeByQueryTool = {
+  name: "getBasicCommonCodeByQuery",
+  description: "사용자 질의에 따라 적합한 기본공통코드를 조회합니다.",
   inputSchema: { query: z.string().min(1) },
   async handler({ query }) {
-    const functionName = "getCommonCodeByQueryTool.handler";
+    const functionName = "getBasicCommonCodeByQueryTool.handler";
     // logger.info(
     //   `Executing ${functionName} with params: ${JSON.stringify({ query })}`
     // );
-    logger.info(`Query: ${query}`);
+    logger.info(`Basic Query: ${query}`);
     try {
-      const result = await packageService.getCommonCodeByQuery(query);
-      logger.info(
-        `${functionName} completed successfully with result: ${JSON.stringify(
-          result
-        )}`
-      );
+      const result = await packageService.getBasicCommonCodeByQuery(query);
       const response = {
         content: [
           {
