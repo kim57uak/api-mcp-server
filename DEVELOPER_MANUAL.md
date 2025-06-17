@@ -148,7 +148,12 @@ mcp-server/
 *   🧠 **Handler Logic**:
     1.  Logs entry, parameters, results, and errors to both console and file using the central logger.
     2.  Receives `query` as input.
-    3.  Calls **`packageService.getCommonCodeByQuery(query)`** to fetch common code data.
+    3.  Calls **`packageService.getCommonCodeByQuery(query)`** to fetch common code data. The `packageService.getCommonCodeByQuery(query)` method performs the following steps:
+        1.  Constructs a URL using `apiUrls.commonOlsBase` (from `src/config/serviceConfig.js`) and the endpoint `/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`.
+        2.  Makes a `POST` request to this URL. The request body includes:
+            *   `comBscCd`: The input `query` string.
+            *   `header`: An object containing `langCode` (from `defaultApiParams.commonCodeLang` in `src/config/serviceConfig.js`).
+        3.  The response data from this API call is then returned, packaged with the original query.
     4.  Formats the data as a JSON string within the MCP content structure (type `text`).
     5.  Returns the formatted content or an error object if an exception occurs.
 *   ✅ **Output (Success Example)**:
@@ -171,7 +176,12 @@ mcp-server/
 *   🧠 **Handler Logic**:
     ```
     1. Logs the input `query`.
-    2. Calls `packageService.getBasicCommonCodeByQuery(query)` to fetch basic common code data.
+    2. Calls `packageService.getBasicCommonCodeByQuery(query)` to fetch basic common code data. The `packageService.getBasicCommonCodeByQuery(query)` method performs the following steps:
+        1.  Constructs a URL using `apiUrls.commonOlsBase` (from `src/config/serviceConfig.js`) and the endpoint `/common/ols/codemgt/cbc/commoncodemgt/getComBscCdList/v1.00`. This endpoint is specifically for fetching basic common codes.
+        2.  Makes a `POST` request to this URL. The request body includes:
+            *   `comBscCd`: The input `query` string.
+            *   `header`: An object containing `langCode` (from `defaultApiParams.commonCodeLang` in `src/config/serviceConfig.js`).
+        3.  The response data from this API call (a list of basic common codes) is then returned, packaged with the original query.
     3. Formats the result as a JSON string within the MCP content structure (type `text`).
     4. Returns the formatted content or an error object if an exception occurs.
     ```

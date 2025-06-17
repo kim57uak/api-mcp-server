@@ -148,7 +148,12 @@ mcp-server/
 *   🧠 **핸들러 로직**:
     1.  중앙 로거를 사용하여 항목, 매개변수, 결과 및 오류를 콘솔과 파일 모두에 기록합니다.
     2.  `query`를 입력으로 받습니다.
-    3.  공통 코드 데이터를 가져오기 위해 **`packageService.getCommonCodeByQuery(query)`**를 호출합니다.
+    3.  공통 코드 데이터를 가져오기 위해 **`packageService.getCommonCodeByQuery(query)`**를 호출합니다. `packageService.getCommonCodeByQuery(query)` 메서드는 다음 단계를 수행합니다:
+        1.  `src/config/serviceConfig.js`의 `apiUrls.commonOlsBase`와 `/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00` 엔드포인트를 사용하여 URL을 구성합니다.
+        2.  이 URL에 `POST` 요청을 보냅니다. 요청 본문에는 다음이 포함됩니다:
+            *   `comBscCd`: 입력 `query` 문자열.
+            *   `header`: `src/config/serviceConfig.js`의 `defaultApiParams.commonCodeLang`에서 가져온 `langCode`를 포함하는 객체.
+        3.  이 API 호출의 응답 데이터는 원본 쿼리와 함께 패키징되어 반환됩니다.
     4.  데이터를 MCP 콘텐츠 구조(타입 `text`) 내의 JSON 문자열로 포맷합니다.
     5.  예외 발생 시 포맷된 콘텐츠 또는 오류 객체를 반환합니다.
 *   ✅ **출력 (성공 예시)**:
@@ -171,7 +176,12 @@ mcp-server/
 *   🧠 **핸들러 로직**:
     ```
     1. 입력 `query`를 기록합니다.
-    2. 기본 공통 코드 데이터를 가져오기 위해 `packageService.getBasicCommonCodeByQuery(query)`를 호출합니다.
+    2. 기본 공통 코드 데이터를 가져오기 위해 `packageService.getBasicCommonCodeByQuery(query)`를 호출합니다. `packageService.getBasicCommonCodeByQuery(query)` 메서드는 다음 단계를 수행합니다:
+        1.  `src/config/serviceConfig.js`의 `apiUrls.commonOlsBase`와 `/common/ols/codemgt/cbc/commoncodemgt/getComBscCdList/v1.00` 엔드포인트를 사용하여 URL을 구성합니다. 이 엔드포인트는 특히 기본 공통 코드를 가져오기 위한 것입니다.
+        2.  이 URL에 `POST` 요청을 보냅니다. 요청 본문에는 다음이 포함됩니다:
+            *   `comBscCd`: 입력 `query` 문자열.
+            *   `header`: `src/config/serviceConfig.js`의 `defaultApiParams.commonCodeLang`에서 가져온 `langCode`를 포함하는 객체.
+        3.  이 API 호출의 응답 데이터(기본 공통 코드 목록)는 원본 쿼리와 함께 패키징되어 반환됩니다.
     3. 결과를 MCP 콘텐츠 구조(타입 `text`) 내의 JSON 문자열로 포맷합니다.
     4. 예외 발생 시 포맷된 콘텐츠 또는 오류 객체를 반환합니다.
     ```
