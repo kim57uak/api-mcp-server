@@ -11,6 +11,16 @@ A Node.js server implementing the Model Context Protocol (MCP) for managing sale
 - **Configurable Service Layer**: Allows for easy customization and extension of services.
 - **Structured Logging**: Provides detailed and organized logs for monitoring and debugging.
 
+## ⚙️ About Model Context Protocol (MCP)
+
+The **Model Context Protocol (MCP)** SDK (`@modelcontextprotocol/sdk`) is a foundational component of this server. It provides the framework and utilities for defining and managing the tools that this server exposes.
+
+You do not need to install the MCP SDK separately. It is listed as a project dependency in the **`package.json`** file and will be automatically installed when you run:
+
+```bash
+npm install
+```
+
 ## 🚀 Getting Started
 
 To get started with setting up and running the server, please refer to the **[Installation Guide](INSTALL.md)**.

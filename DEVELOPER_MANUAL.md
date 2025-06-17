@@ -8,6 +8,7 @@
   - [3.1. 🛠️ `getSaleProductSchedule` Tool](#31--getsaleproductschedule-tool)
   - [3.2. 🛠️ `updateSaleProductSchedule` Tool](#32--updatesaleproductschedule-tool)
   - [3.3. 🛠️ `getCommonCodeByQuery` Tool](#33--getcommoncodebyquery-tool)
+  - [3.4. 🛠️ `getBasicCommonCodeByQuery` Tool](#34--getbasiccommoncodebyquery-tool)
 - [4. ⚙️ Configuration Management](#4--configuration-management)
 - [5. 💪 SOLID Principles Application](#5--solid-principles-application)
 - [6. ✨ Adding a New MCP Tool](#6--adding-a-new-mcp-tool)
@@ -19,6 +20,8 @@ This document provides a detailed overview of the **MCP Sale Product Server's** 
 ## 1. 📖 Project Overview
 
 The **MCP Sale Product Server** is a **Node.js** application built using the **Model Context Protocol (MCP) SDK**. It exposes tools to manage sales product schedules. The server is designed with **SOLID principles** in mind to ensure maintainability and scalability.
+
+The server is built using the **Model Context Protocol (MCP) SDK** (`@modelcontextprotocol/sdk`). This SDK is a core dependency of the project, managed via the `package.json` file and installed as part of the standard `npm install` process. It provides the necessary tools and interfaces for creating and managing MCP-compliant services and tools.
 
 ## 2. 🧱 Project Structure
 
@@ -154,6 +157,30 @@ mcp-server/
       "content": [{
         "type": "text",
         "text": "{\n  \"code\": \"PROD_ATTR_CD\",\n  \"data\": { \"example\": [\"code1\", \"code2\"] }\n}"
+      }]
+    }
+    ```
+
+### 3.4. 🛠️ `getBasicCommonCodeByQuery` Tool
+
+*   🎯 **Purpose**: Retrieves suitable basic common codes based on user queries. (*Original description: "사용자 질의에 따라 적합한 기본공통코드를 조회합니다."*)
+*   📥 **Input Schema** (**`zod`**):
+    ```javascript
+    { query: z.string().min(1) } // query must be a non-empty string
+    ```
+*   🧠 **Handler Logic**:
+    ```
+    1. Logs the input `query`.
+    2. Calls `packageService.getBasicCommonCodeByQuery(query)` to fetch basic common code data.
+    3. Formats the result as a JSON string within the MCP content structure (type `text`).
+    4. Returns the formatted content or an error object if an exception occurs.
+    ```
+*   ✅ **Output (Success Example)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"code\": \"BASIC_CODE_EXAMPLE\",\n  \"data\": { \"description\": \"Sample basic common code data\" }\n}"
       }]
     }
     ```
