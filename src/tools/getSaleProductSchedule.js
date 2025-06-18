@@ -1,23 +1,51 @@
 // src/tools/getSaleProductSchedule.js
 import { z } from "zod";
 import { packageService } from "../services/packageService.js";
-import logger from '../utils/logger.cjs';
+import logger from "../utils/logger.cjs";
+import { stripHtml } from "../utils/stripHtml.js";
 
 export const getSaleProductScheduleTool = {
   name: "getSaleProductSchedule",
-  description: "Get sales product schedules by saleProdCd",
+  description:
+    "판매상품일정을 판매상품코드로 조회합니다. 조회결과는 다음과 같습니다. " +
+    "schdInfoList => schdMainInfoList[] => 반복된 schdDay (1일차,2일차,3일차,...) => 반복된 값을 분석해서 최소값과 최대값을 확인한다. " +
+    "schdInfoList => schdMainInfoList[] => 일별 주요여행일정정보 리스트 " +
+    "schdInfoList => schdMainInfoList[] => 일별 호텔정보 리스트 " +
+    "pkgAirSeqList => 항공정보",
   inputSchema: { saleProdCd: z.string().min(1) },
   async handler({ saleProdCd }) {
     const functionName = "getSaleProductScheduleTool.handler";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd })}`);
+    logger.info(
+      `Executing ${functionName} with params: ${JSON.stringify({ saleProdCd })}`
+    );
     try {
       console.log(
         `Executing getSaleProductSchedule tool for saleProdCd: ${saleProdCd}`
       );
       const schedules = await packageService.getSchedules(saleProdCd);
+      // schedules 내 모든 문자열에서 html 태그 제거
+      function cleanObject(obj) {
+        if (typeof obj === "string") return stripHtml(obj);
+        if (Array.isArray(obj))
+          return obj.map(cleanObject).filter((v) => v !== undefined);
+        if (obj && typeof obj === "object") {
+          const newObj = {};
+          for (const key in obj) {
+            const cleaned = cleanObject(obj[key]);
+            if (cleaned !== null && cleaned !== undefined) {
+              newObj[key] = cleaned;
+            }
+          }
+          // 모든 값이 undefined로 제외된 경우 빈 객체 반환
+          return Object.keys(newObj).length > 0 ? newObj : undefined;
+        }
+        if (obj === null) return undefined;
+        return obj;
+      }
+      const cleanedSchedules = cleanObject(schedules);
       const responseData = {
         saleProdCd: saleProdCd,
-        schedules: schedules,
+        schedules: cleanedSchedules,
         retrievedAt: new Date().toISOString(),
       };
       const response = {
@@ -28,11 +56,18 @@ export const getSaleProductScheduleTool = {
           },
         ],
       };
-      logger.info(`${functionName} completed successfully with result: ${JSON.stringify(response)}`);
+      logger.info(
+        `${functionName} completed successfully with result: ${JSON.stringify(
+          response
+        )}`
+      );
       return response;
     } catch (error) {
-      logger.error(`Error in ${functionName}: ${error.message}`, { error: error.stack });
-      console.error( // Original console.error
+      logger.error(`Error in ${functionName}: ${error.message}`, {
+        error: error.stack,
+      });
+      console.error(
+        // Original console.error
         `Error in getSaleProductSchedule tool: ${error.message}`,
         error
       );
