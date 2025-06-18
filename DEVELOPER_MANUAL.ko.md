@@ -7,7 +7,7 @@
 - [3. 🔧 MCP 도구 구현](#3-🔧-mcp-도구-구현)
   - [3.1. 🛠️ `getSaleProductSchedule` 도구 (`src/tools/getSaleProductSchedule.js`)](#31-🛠️-getsaleproductschedule-도구-srctoolsgetsaleproductschedulejs)
   - [3.2. 🛠️ `updateSaleProductSchedule` 도구 (`src/tools/updateSaleProductSchedule.js`)](#32-🛠️-updatesaleproductschedule-도구-srctoolsupdatesaleproductschedulejs)
-  - [3.3. 🛠️ `getCommonCodeByQuery` 도구 (`src/tools/getCommonCodeByQuery.js`)](#33-🛠️-getcommoncodebyquery-도구-srctoolsgetcommoncodebyqueryjs)
+  - [3.3. 🛠️ `getDetailCommonCodeByQuery` 도구 (`src/tools/getDetailCommonCodeByQuery.js`)](#33-🛠️-getDetailCommonCodeByQuery-도구-srctoolsgetDetailCommonCodeByQueryjs)
   - [3.4. 🛠️ `getBasicCommonCodeByQuery` 도구](#34-🛠️-getbasiccommoncodebyquery-도구)
 - [4. ⚙️ 설정 관리](#4-⚙️-설정-관리)
 - [5. 💪 SOLID 원칙 적용](#5-💪-solid-원칙-적용)
@@ -75,12 +75,12 @@ mcp-server/
     *   이 파일은 주로 **`packageService.js`**와 같은 서비스의 설정을 중앙에서 관리합니다.
     *   `apiUrls`, `codeMappings`, `defaultApiParams`와 같은 객체를 내보냅니다.
     *   `apiUrls`는 외부 API의 기본 URL을 포함합니다. 이는 환경 변수(예: **`PKG_API_BASE_URL`**)로 재정의될 수 있습니다.
-    *   `codeMappings`는 **`getCommonCodeByQuery`**를 위한 `codeMapArray`와 같이 비즈니스 로직에서 사용되는 매핑을 포함합니다.
+    *   `codeMappings`는 **`getDetailCommonCodeByQuery`**를 위한 `codeMapArray`와 같이 비즈니스 로직에서 사용되는 매핑을 포함합니다.
     *   `defaultApiParams`는 `commonCodeLang`과 같이 API 호출을 위한 기본 매개변수를 보유합니다.
     *   이 접근 방식은 서비스 로직을 변경하지 않고 설정 및 환경별 구성을 더 쉽게 관리할 수 있도록 합니다.
 
 *   📦 **`src/services/`**:
-    *   비즈니스 로직을 담당하는 모듈을 포함합니다. 예를 들어, **`packageService.js`**는 패키지 스케줄 및 공통 코드 검색과 관련된 비즈니스 로직을 처리합니다. 이제 API 엔드포인트 및 기타 운영 매개변수를 **`src/config/serviceConfig.js`**에서 가져오므로 더욱 설정하기 쉬워졌습니다. **`getSchedules()`**, **`updateSchedule()`**, **`getCommonCodeByQuery()`**와 같은 함수를 포함합니다.
+    *   비즈니스 로직을 담당하는 모듈을 포함합니다. 예를 들어, **`packageService.js`**는 패키지 스케줄 및 공통 코드 검색과 관련된 비즈니스 로직을 처리합니다. 이제 API 엔드포인트 및 기타 운영 매개변수를 **`src/config/serviceConfig.js`**에서 가져오므로 더욱 설정하기 쉬워졌습니다. **`getSchedules()`**, **`updateSchedule()`**, **`getDetailCommonCodeByQuery()`**와 같은 함수를 포함합니다.
     *   서비스는 MCP 전송 계층과 독립적으로 설계되었으며 재사용될 수 있습니다.
     *   데이터 검색, 업데이트 및 복잡한 계산을 수행합니다.
 
@@ -138,7 +138,7 @@ mcp-server/
     }
     ```
 
-### 3.3. 🛠️ `getCommonCodeByQuery` 도구 (`src/tools/getCommonCodeByQuery.js`)
+### 3.3. 🛠️ `getDetailCommonCodeByQuery` 도구 (`src/tools/getDetailCommonCodeByQuery.js`)
 
 *   🎯 **목적**: 사용자 질의에 따라 공통 코드(예: 속성, 지역, 국가, 대륙, 브랜드 코드)를 조회합니다. (*원문 설명: "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다."*)
 *   📥 **입력 스키마** (**`zod`**):
@@ -148,7 +148,7 @@ mcp-server/
 *   🧠 **핸들러 로직**:
     1.  중앙 로거를 사용하여 항목, 매개변수, 결과 및 오류를 콘솔과 파일 모두에 기록합니다.
     2.  `query`를 입력으로 받습니다.
-    3.  공통 코드 데이터를 가져오기 위해 **`packageService.getCommonCodeByQuery(query)`**를 호출합니다. `packageService.getCommonCodeByQuery(query)` 메서드는 다음 단계를 수행합니다:
+    3.  공통 코드 데이터를 가져오기 위해 **`packageService.getDetailCommonCodeByQuery(query)`**를 호출합니다. `packageService.getDetailCommonCodeByQuery(query)` 메서드는 다음 단계를 수행합니다:
         1.  `src/config/serviceConfig.js`의 `apiUrls.commonOlsBase`와 `/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00` 엔드포인트를 사용하여 URL을 구성합니다.
         2.  이 URL에 `POST` 요청을 보냅니다. 요청 본문에는 다음이 포함됩니다:
             *   `comBscCd`: 입력 `query` 문자열.

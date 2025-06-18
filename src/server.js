@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createStdioTransport } from "./transports/stdioTransport.js"; // Import createStdioTransport
 import { tools } from "./tools/index.js"; // Import tools
+import logger from "./utils/logger.cjs";
 
 async function main() {
   const server = new McpServer({
@@ -11,6 +12,7 @@ async function main() {
   // Register tools
   tools.forEach((tool) => {
     server.tool(tool.name, tool.description, tool.inputSchema, tool.handler);
+    logger.info(`Registered tool: ${tool.name}`);
   });
 
   const transport = createStdioTransport(); // Use the factory function

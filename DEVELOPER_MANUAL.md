@@ -1,19 +1,21 @@
 # 📄 MCP Sale Product Server - Developer Manual
 
 ## Table of Contents
-- [1. 📖 Project Overview](#1--project-overview)
-- [2. 🧱 Project Structure](#2--project-structure)
-  - [🔑 Key Components:](#-key-components)
-- [3. 🔧 MCP Tool Implementation](#3--mcp-tool-implementation)
-  - [3.1. 🛠️ `getSaleProductSchedule` Tool](#31--getsaleproductschedule-tool)
-  - [3.2. 🛠️ `updateSaleProductSchedule` Tool](#32--updatesaleproductschedule-tool)
-  - [3.3. 🛠️ `getCommonCodeByQuery` Tool](#33--getcommoncodebyquery-tool)
-  - [3.4. 🛠️ `getBasicCommonCodeByQuery` Tool](#34--getbasiccommoncodebyquery-tool)
-- [4. ⚙️ Configuration Management](#4--configuration-management)
-- [5. 💪 SOLID Principles Application](#5--solid-principles-application)
-- [6. ✨ Adding a New MCP Tool](#6--adding-a-new-mcp-tool)
-- [7. 🚀 Running and Testing](#7--running-and-testing)
-- [8. 🌱 Future Enhancements](#8--future-enhancements)
+- [📄 MCP Sale Product Server - Developer Manual](#-mcp-sale-product-server---developer-manual)
+  - [Table of Contents](#table-of-contents)
+  - [1. 📖 Project Overview](#1--project-overview)
+  - [2. 🧱 Project Structure](#2--project-structure)
+    - [🔑 Key Components:](#-key-components)
+  - [3. 🔧 MCP Tool Implementation](#3--mcp-tool-implementation)
+    - [3.1. 🛠️ `getSaleProductSchedule` Tool (`src/tools/getSaleProductSchedule.js`)](#31-️-getsaleproductschedule-tool-srctoolsgetsaleproductschedulejs)
+    - [3.2. 🛠️ `updateSaleProductSchedule` Tool (`src/tools/updateSaleProductSchedule.js`)](#32-️-updatesaleproductschedule-tool-srctoolsupdatesaleproductschedulejs)
+    - [3.3. 🛠️ `getDetailCommonCodeByQuery` Tool (`src/tools/getDetailCommonCodeByQuery.js`)](#33-️-getdetailcommoncodebyquery-tool-srctoolsgetdetailcommoncodebyqueryjs)
+    - [3.4. 🛠️ `getBasicCommonCodeByQuery` Tool](#34-️-getbasiccommoncodebyquery-tool)
+  - [4. ⚙️ Configuration Management](#4-️-configuration-management)
+  - [5. 💪 SOLID Principles Application](#5--solid-principles-application)
+  - [6. ✨ Adding a New MCP Tool](#6--adding-a-new-mcp-tool)
+  - [7. 🚀 Running and Testing](#7--running-and-testing)
+  - [8. 🌱 Future Enhancements](#8--future-enhancements)
 
 This document provides a detailed overview of the **MCP Sale Product Server's** architecture, components, and development guidelines.
 
@@ -75,12 +77,12 @@ mcp-server/
     *   This file centralizes configurations for services, primarily **`packageService.js`**.
     *   It exports objects like `apiUrls`, `codeMappings`, and `defaultApiParams`.
     *   `apiUrls` includes base URLs for external APIs. These can be overridden by environment variables (e.g., **`PKG_API_BASE_URL`**).
-    *   `codeMappings` contains mappings used by business logic, like the `codeMapArray` for **`getCommonCodeByQuery`**.
+    *   `codeMappings` contains mappings used by business logic, like the `codeMapArray` for **`getDetailCommonCodeByQuery`**.
     *   `defaultApiParams` holds default parameters for API calls, like `commonCodeLang`.
     *   This approach allows for easier management of settings and environment-specific configurations without altering the service logic.
 
 *   📦 **`src/services/`**:
-    *   Contains modules responsible for business logic. For example, **`packageService.js`** handles business logic related to package schedules and common code retrieval. It now imports its API endpoints and other operational parameters from **`src/config/serviceConfig.js`**, making it more configurable. It includes functions like **`getSchedules()`**, **`updateSchedule()`**, and **`getCommonCodeByQuery()`**.
+    *   Contains modules responsible for business logic. For example, **`packageService.js`** handles business logic related to package schedules and common code retrieval. It now imports its API endpoints and other operational parameters from **`src/config/serviceConfig.js`**, making it more configurable. It includes functions like **`getSchedules()`**, **`updateSchedule()`**, and **`getDetailCommonCodeByQuery()`**.
     *   Services are designed to be independent of the MCP transport layer and can be reused.
     *   They perform data retrieval, updates, and any complex computations.
 
@@ -138,7 +140,7 @@ mcp-server/
     }
     ```
 
-### 3.3. 🛠️ `getCommonCodeByQuery` Tool (`src/tools/getCommonCodeByQuery.js`)
+### 3.3. 🛠️ `getDetailCommonCodeByQuery` Tool (`src/tools/getDetailCommonCodeByQuery.js`)
 
 *   🎯 **Purpose**: Retrieves common codes (like attribute, region, country, continent, brand codes) based on a user query. (*Original description: "사용자 질의중 코드성 데이타에 적합한 속성,지역,국가,대륙,브랜드 코드를 조회합니다."*)
 *   📥 **Input Schema** (**`zod`**):
@@ -148,7 +150,7 @@ mcp-server/
 *   🧠 **Handler Logic**:
     1.  Logs entry, parameters, results, and errors to both console and file using the central logger.
     2.  Receives `query` as input.
-    3.  Calls **`packageService.getCommonCodeByQuery(query)`** to fetch common code data. The `packageService.getCommonCodeByQuery(query)` method performs the following steps:
+    3.  Calls **`packageService.getDetailCommonCodeByQuery(query)`** to fetch common code data. The `packageService.getDetailCommonCodeByQuery(query)` method performs the following steps:
         1.  Constructs a URL using `apiUrls.commonOlsBase` (from `src/config/serviceConfig.js`) and the endpoint `/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`.
         2.  Makes a `POST` request to this URL. The request body includes:
             *   `comBscCd`: The input `query` string.
