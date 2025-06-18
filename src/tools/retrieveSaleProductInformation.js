@@ -27,11 +27,11 @@ export const retrieveSaleProductInformationTool = {
     - \`totalRowCount\` (총 상품 수): 검색 조건에 해당하는 전체 상품의 개수.
     - \`totalPageCount\` (총 페이지 수): 전체 상품을 \`pageSize\`에 따라 나눈 총 페이지 수.
     `,
-  inputSchema: z.object({
+  inputSchema: {
     saleProdCd: z.string().optional(), // 선택값으로 변경
     resCd: z.string().optional(), // 선택값
-    startDate: z.string().min(1), // 필수값
-    endDate: z.string().min(1), // 필수값
+    startDate: z.number().min(1), // 필수값
+    endDate: z.number().min(1), // 필수값
     prodAttrCd: z.string().optional(), // 선택값
     prodAreaCd: z.string().min(1), // 필수값
     saleProdNm: z.string().optional(), // 선택값
@@ -39,9 +39,13 @@ export const retrieveSaleProductInformationTool = {
     pageNumber: z.number().optional(),
     totalRowCount: z.number().optional(),
     totalPageCount: z.number().optional(),
-  }),
+  },
   async handler(inputArguments) {
-    console.log("Received inputArguments by handler:", JSON.stringify(inputArguments, null, 2));
+    console.log(
+      "Received inputArguments by handler:",
+      JSON.stringify(inputArguments, null, 2)
+    );
+
     const {
       saleProdCd,
       resCd,
@@ -54,7 +58,7 @@ export const retrieveSaleProductInformationTool = {
       pageNumber,
       totalRowCount,
       totalPageCount,
-    } = inputArguments;
+    } = inputArguments; //구조분해할당
     const functionName = "retrieveSaleProductInformationTool.handler";
     const params = {
       saleProdCd,

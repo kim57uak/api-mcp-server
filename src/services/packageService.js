@@ -150,7 +150,7 @@ export const packageService = {
           agtCd: "",
           splyStaffAuth: "N",
         },
-        body_pageVo: {
+        pageVo: {
           pageSize: pageSize || 100,
           pageNumber: pageNumber || 1,
           totalRowCount: totalRowCount || 0,
