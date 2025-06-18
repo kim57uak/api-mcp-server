@@ -40,19 +40,21 @@ export const retrieveSaleProductInformationTool = {
     totalRowCount: z.number().optional(),
     totalPageCount: z.number().optional(),
   }),
-  async handler({
-    saleProdCd,
-    resCd,
-    startDate,
-    endDate,
-    prodAttrCd,
-    prodAreaCd,
-    saleProdNm,
-    pageSize,
-    pageNumber,
-    totalRowCount,
-    totalPageCount,
-  }) {
+  async handler(inputArguments) {
+    console.log("Received inputArguments by handler:", JSON.stringify(inputArguments, null, 2));
+    const {
+      saleProdCd,
+      resCd,
+      startDate,
+      endDate,
+      prodAttrCd,
+      prodAreaCd,
+      saleProdNm,
+      pageSize,
+      pageNumber,
+      totalRowCount,
+      totalPageCount,
+    } = inputArguments;
     const functionName = "retrieveSaleProductInformationTool.handler";
     const params = {
       saleProdCd,
