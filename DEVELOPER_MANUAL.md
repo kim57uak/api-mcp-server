@@ -234,8 +234,8 @@ mcp-server/
     *   `reservationCode` (string, optional): Code for a specific reservation.
     *   `startDate` (number, **required**): Start date for search (YYYYMMDD).
     *   `endDate` (number, **required**): End date for search (YYYYMMDD).
-    *   `productAttributeCode` (enum, optional): Product attribute code. Allowed values are `'P'` (Package), `'W'` (Wedding), `'B'` (Activity).
-    *   `productAreaCode` (enum, optional): Product area code. Allowed values are `'AA'` (Bangkok), `'C1'` (China), `'HH'` (Americas), `'J0'` (Japan).
+    *   `productAttributeCode` (enum, optional): Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes.
+    *   `productAreaCode` (enum, optional): Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes.
     *   `saleProductName` (string, optional): Keywords for product name.
     *   Pagination parameters (`pageSize`, `pageNumber`, `totalRowCount`, `totalPageCount`) are also available as optional numbers.
 
@@ -243,16 +243,16 @@ mcp-server/
 
 *   📊 **Input Parameter Structure**
 
-    | Parameter               | Type   | Required? | Allowed Values         | Description                                                                                                                               |
-    | :---------------------- | :----- | :-------- | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-    | 👑 `saleProductCode`    | string | Optional  | N/A                    | The unique code for a specific sales product. Used when you want to look up a particular item.                                          |
-    | 🔖 `reservationCode`    | string | Optional  | N/A                    | The code associated with a specific reservation. Used to find products related to that reservation.                                       |
-    | 📅 `startDate`          | number | **Required** | N/A                    | The start date for searching products, in YYYYMMDD format. This is a required field.                                                      |
-    | 📅 `endDate`            | number | **Required** | N/A                    | The end date for searching products, in YYYYMMDD format. This is a required field.                                                        |
-    | ✨ `productAttributeCode` | enum   | Optional  | `['P', 'W', 'B']`      | Code representing the attribute of the product (e.g., 'P' for Package, 'W' for Wedding, 'B' for Activity). Select from predefined values. |
-    | 🌍 `productAreaCode`     | enum   | Optional  | `['AA', 'C1', 'HH', 'J0']` | Code for the product's geographical area (e.g., 'AA' for Bangkok, 'C1' for China, 'HH' for Americas, 'J0' for Japan). Select from predefined values. |
-    | 🏷️ `saleProductName`     | string | Optional  | N/A                    | Keywords from the user's query that refer to the product name.                                                                          |
-    | 📄 `pageSize`           | number | Optional  | N/A                    | The maximum number of products to display on a single page.                                                                               |
+    | Parameter               | Type   | Required? | Allowed Values                                     | Description                                                                                                                               |
+    | :---------------------- | :----- | :-------- | :------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+    | 👑 `saleProductCode`    | string | Optional  | N/A                                                | The unique code for a specific sales product. Used when you want to look up a particular item.                                          |
+    | 🔖 `reservationCode`    | string | Optional  | N/A                                                | The code associated with a specific reservation. Used to find products related to that reservation.                                       |
+    | 📅 `startDate`          | number | **Required** | N/A                                                | The start date for searching products, in YYYYMMDD format. This is a required field.                                                      |
+    | 📅 `endDate`            | number | **Required** | N/A                                                | The end date for searching products, in YYYYMMDD format. This is a required field.                                                        |
+    | ✨ `productAttributeCode` | enum   | Optional  | `P (Package), W (Wedding), B (Activity)`           | Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes. |
+    | 🌍 `productAreaCode`     | enum   | Optional  | `AA (Bangkok, Southeast Asia), C1 (China), HH (Americas), J0 (Japan)` | Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes. |
+    | 🏷️ `saleProductName`     | string | Optional  | N/A                                                | Keywords from the user's query that refer to the product name.                                                                          |
+    | 📄 `pageSize`           | number | Optional  | N/A                                                | The maximum number of products to display on a single page.                                                                               |
     | 🔢 `pageNumber`         | number | Optional  | N/A                    | The page number of the results you want to view.                                                                                          |
     | 🧮 `totalRowCount`      | number | Optional  | N/A                    | The total count of products matching the search criteria.                                                                                 |
     | 📖 `totalPageCount`     | number | Optional  | N/A                    | The total number of pages, calculated based on `pageSize` and `totalRowCount`.                                                            |

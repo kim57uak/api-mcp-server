@@ -45,8 +45,8 @@ export const retrieveSaleProductInformationTool = {
     reservationCode: z.string().optional().describe("The code associated with a specific reservation. Used to find products related to that reservation."),
     startDate: z.number().min(1).describe("The start date for searching products, in YYYYMMDD format. This is a required field."), // 필수값
     endDate: z.number().min(1).describe("The end date for searching products, in YYYYMMDD format. This is a required field."), // 필수값
-    productAttributeCode: ProductAttributeCodeEnum.optional().describe("Code representing the attribute of the product (e.g., 'P' for Package, 'W' for Wedding, 'B' for Activity). Select from predefined values."), // 선택값
-    productAreaCode: ProductAreaCodeEnum.optional().describe("Code for the product's geographical area (e.g., 'AA' for Bangkok, 'C1' for China, 'HH' for Americas, 'J0' for Japan). Select from predefined values."), // 필수값
+    productAttributeCode: ProductAttributeCodeEnum.optional().describe("Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes."), // 선택값
+    productAreaCode: ProductAreaCodeEnum.optional().describe("Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes."), // 필수값
     saleProductName: z.string().optional().describe("Keywords from the user's query that refer to the product name."), // 선택값
     pageSize: z.number().optional().describe("The maximum number of products to display on a single page."),
     pageNumber: z.number().optional().describe("The page number of the results you want to view."),
