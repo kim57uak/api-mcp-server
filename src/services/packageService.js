@@ -58,26 +58,26 @@ export const packageService = {
   },
 
   retrieveSaleProductInformation: async ({
-    saleProdCd,
-    resCd,
+    saleProductCode,
+    reservationCode,
     startDate,
     endDate,
-    prodAttrCd,
-    prodAreaCd,
-    saleProdNm,
+    productAttributeCode,
+    productAreaCode,
+    saleProductName,
     pageSize,
     pageNumber,
     totalRowCount,
     totalPageCount,
   }) => {
     const params = {
-      saleProdCd,
-      resCd,
+      saleProductCode,
+      reservationCode,
       startDate,
       endDate,
-      prodAttrCd,
-      prodAreaCd,
-      saleProdNm,
+      productAttributeCode,
+      productAreaCode,
+      saleProductName,
       pageSize,
       pageNumber,
       totalRowCount,
@@ -90,66 +90,65 @@ export const packageService = {
     );
 
     try {
-      const url = `${apiUrls.packageOlsBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSaleProdBrwsTab/v1.00`;
+      const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSaleProdBrwsTab/v1.00`;
 
       // 요청 본문을 동적으로 생성
       const requestBody = {
-        saleProdBrwsTabQcInVo: {
-          prodCdDv: "P", // 고정값
-          prodCd: saleProdCd || "", // saleProdCd 값 사용 또는 빈 문자열
-          prodSprtrCd: "",
-          resCd: resCd || "", // resCd 값 사용 또는 빈 문자열
-          prodAreaCd: prodAreaCd || "A1", // prodAreaCd 값 사용 (필수값)
-          teamDvCd: "",
-          arngRpprEmpn: "",
-          mrchRpprEmpn: "",
-          airRpprEmpn: "",
-          dpurcRpprEmpn: "",
-          depArrDvCd: "S", // 고정값
-          strtDt: startDate, // startDate 값 사용 (필수값)
-          endDt: endDate, // endDate 값 사용 (필수값)
-          prodBrwsTypeCd: "",
-          prodTypeCd: "",
-          trnpTypeCd: "",
-          allYn: "A", // 고정값
-          sndyYn: "",
-          monYn: "",
-          tueYn: "",
-          wedYn: "",
-          thuYn: "",
-          friYn: "",
-          satYn: "",
-          prodBrndCd: "",
-          promCd: "",
-          prodDvCd: "",
-          thmCd: "",
-          invPtnId: "",
-          depAirCd: "",
-          depFlgtCd: "",
-          arrAirCd: "",
-          arrFlgtCd: "",
-          depCityCd: "",
-          teamDeptCd: "",
-          saleProdNm: saleProdNm || "", // saleProdNm 값 사용 또는 빈 문자열
-          htlCd: "",
-          landCd: "",
-          adtAmt: "",
-          bassFeeRate: null,
-          ocrtFeeRate: null,
-          afcnFeeRate: null,
-          depoKndCd: "",
-          prodAttrCd: prodAttrCd || "", // prodAttrCd 값 사용 또는 빈 문자열
-          tempArngNm: "",
-          tempMrchNm: "",
-          tempAirNm: "",
-          tempDpurcNm: "",
-          tempCard: "",
-          prodAreaEtcCd: "G", // 고정값
-          scodInfo: "",
-          cityCdInfo: "",
-          agtCd: "",
-          splyStaffAuth: "N",
-        },
+        productCodeDivision: "P", // prodCdDv
+        productCode: saleProductCode || "", // prodCd
+        productSeparator: "", // prodSprtrCd
+        reservationCode: reservationCode || "", // resCd
+        productAreaCode: productAreaCode || "AA", // prodAreaCd
+        teamDivisionCode: "", // teamDvCd
+        arrangementEmployeeNumber: "", // arngRpprEmpn
+        merchandiserEmployeeNumber: "", // mrchRpprEmpn
+        airEmployeeNumber: "", // airRpprEmpn
+        directPurchaseHotelEmployeeNumber: "", // dpurcRpprEmpn
+        departureArrivalDivisionCode: "S", // depArrDvCd
+        startDate: startDate, // startDate
+        endDate: endDate, // endDate
+        productBrowseTypeCode: "", // prodBrwsTypeCd
+        productTypeCode: "", // prodTypeCd
+        transitTypeCode: "", // trnpTypeCd
+        allYn: "A", // allYn
+        sundayYn: "", // sndyYn
+        mondayYn: "", // monYn
+        tuesdayYn: "", // tueYn
+        wednesdayYn: "", // wedYn
+        thursdayYn: "", // thuYn
+        fridayYn: "", // friYn
+        saturdayYn: "", // satYn
+        productBrandCode: "", // prodBrndCd
+        promotionCode: "", // promCd
+        productDivisionCode: "", // prodDvCd
+        themeCode: "", // thmCd
+        inventoryPatternId: "", // invPtnId
+        departureAirCode: "", // depAirCd
+        departureFlightCode: "", // depFlgtCd
+        arrivalAirCode: "", // arrAirCd
+        arrivalFlightCode: "", // arrFlgtCd
+        departureCityCode: "", // depCityCd
+        teamDepartmentCode: "", // teamDeptCd
+        saleProductName: saleProductName || "", // saleProdNm
+        hotelCode: "", // htlCd
+        landCode: "", // landCd
+        adultAmount: "", // adtAmt
+        basisFeeRate: null, // bassFeeRate
+        officialCertificationFeeRate: null, // ocrtFeeRate
+        affiliatedConcernFeeRate: null, // afcnFeeRate
+        depositKindCode: "", // depoKndCd
+        productAttributeCode: productAttributeCode || "", // prodAttrCd
+        tempArngNm: "", // not mapped (custom)
+        tempMrchNm: "", // not mapped (custom)
+        tempAirNm: "", // not mapped (custom)
+        tempDpurcNm: "", // not mapped (custom)
+        tempCard: "", // not mapped (custom)
+        productAreaExceptCode: "G", // prodAreaEtcCd
+        stateCodeInformation: "", // scodInfo
+        cityCodeInformation: "", // cityCdInfo
+        specificAgentCode: "", // agtCd
+        supplierHeadOfficeDispatchExistenceOrNonexistence: "N", // splyStaffAuth
+
         pageVo: {
           pageSize: pageSize || 100,
           pageNumber: pageNumber || 1,
@@ -261,6 +260,29 @@ export const packageService = {
       return result;
     } catch (error) {
       logger.error(`Error in getBasicCommonCodeByQuery: ${error.message}`, {
+        error: error.stack,
+      });
+      throw error;
+    }
+  },
+  retrieveAreaCode: async () => {
+    try {
+      const url = `${apiUrls.olsQaBase}/pkg/api/gnis/common/cbc/compkgarea/getComPkgAreaCboListForProduct/v1.00`;
+      const res = await axios.post(url, {
+        comBscCd: query,
+        header: {
+          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
+        },
+      });
+      const result = { query, data: res.data };
+      logger.info(
+        `retrieveAreaCode completed successfully with result: ${JSON.stringify(
+          result
+        )}`
+      );
+      return result;
+    } catch (error) {
+      logger.error(`Error in retrieveAreaCode: ${error.message}`, {
         error: error.stack,
       });
       throw error;
