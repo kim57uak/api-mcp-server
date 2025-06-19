@@ -44,16 +44,9 @@ export const tools = [
   {
     ...retrieveSaleProductInformationTool,
     description: `
-    1건 이상의 판매상품정보를 조회하고 싶어.
+    여기서 말하는 상품은 여행상품을 말합니다.
+    다양한 검색조건을 입력하여 1건 이상의 판매상품정보를 조회하려고 합니다.
     하지만 코드값을 알지 못하므로 아래 순서대로 단계적으로 함수를 호출해서 적절한 상품코드로 조회할 수 있도록 도와줘.
-
-    1. 사용자 질의(예: "동남아 지역 / 일본/동남아" → 지역 정보)를 기준으로 getBasicCommonCodeByQueryTool() 함수를 호출해줘. (지역정보만 조회하는 함수는 아님)
-    2. getBasicCommonCodeByQueryTool의 결과 목록 중에서 사용자 질의와 가장 잘 일치하는 코드나 값을 추출해서 getDetailCommonCodeByQueryTool() 함수를 호출해줘.
-    3. getDetailCommonCodeByQueryTool의 결과 코드 중 사용자 질의를 가장 잘 반영하는 하나 이상의 코드를 사용해서 retrieveSaleProductInformationTool() 함수를 호출해줘.
-      - 판매상품정보가 1건 이상 조회될 수 있도록 적절한 코드들을 사용해줘.
-
-    각 함수는 반드시 하나씩만 순차적으로 호출해줘.
-    다음 함수를 호출하기 전에는 반드시 이전 함수의 결과를 먼저 받은 후 처리해줘.
 
     **필수 입력 파라미터:**
     - \`startDate\` (시작일/출발일): 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식).
