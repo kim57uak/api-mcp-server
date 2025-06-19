@@ -41,17 +41,17 @@ export const retrieveSaleProductInformationTool = {
     - \`totalPageCount\`: The total number of pages, calculated based on \`pageSize\` and \`totalRowCount\`.
     `,
   inputSchema: {
-    saleProductCode: z.string().optional().describe("The unique code for a specific sales product. Used when you want to look up a particular item."),
-    reservationCode: z.string().optional().describe("The code associated with a specific reservation. Used to find products related to that reservation."),
-    startDate: z.number().min(1).describe("The start date for searching products, in YYYYMMDD format. This is a required field."), // 필수값
-    endDate: z.number().min(1).describe("The end date for searching products, in YYYYMMDD format. This is a required field."), // 필수값
-    productAttributeCode: ProductAttributeCodeEnum.optional().describe("Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes."), // 선택값
-    productAreaCode: ProductAreaCodeEnum.optional().describe("Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes."), // 필수값
-    saleProductName: z.string().optional().describe("Keywords from the user's query that refer to the product name."), // 선택값
-    pageSize: z.number().optional().describe("The maximum number of products to display on a single page."),
-    pageNumber: z.number().optional().describe("The page number of the results you want to view."),
-    totalRowCount: z.number().optional().describe("The total count of products matching the search criteria."),
-    totalPageCount: z.number().optional().describe("The total number of pages, calculated based on `pageSize` and `totalRowCount`."),
+    saleProductCode: z.string().optional().describe("특정 판매 상품을 조회할 때 사용하는 고유 코드입니다."),
+    reservationCode: z.string().optional().describe("특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다."),
+    startDate: z.number().min(1).describe("상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."), // 필수값
+    endDate: z.number().min(1).describe("상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."), // 필수값
+    productAttributeCode: ProductAttributeCodeEnum.optional().describe("상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다."), // 선택값
+    productAreaCode: ProductAreaCodeEnum.optional().describe("상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다."), // 필수값
+    saleProductName: z.string().optional().describe("사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다."), // 선택값
+    pageSize: z.number().optional().describe("한 페이지에 표시할 상품의 최대 개수를 지정합니다."),
+    pageNumber: z.number().optional().describe("조회할 결과의 페이지 번호를 지정합니다."),
+    totalRowCount: z.number().optional().describe("검색 조건에 해당하는 전체 상품의 개수입니다."),
+    totalPageCount: z.number().optional().describe("전체 상품을 `pageSize`에 따라 나눈 총 페이지 수입니다."),
   },
   async handler(inputArguments) {
     console.log(

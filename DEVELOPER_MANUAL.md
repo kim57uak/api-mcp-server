@@ -229,33 +229,25 @@ mcp-server/
     - `totalPageCount`: The total number of pages, calculated based on `pageSize` and `totalRowCount`.
 
 *   📥 **Input Schema** (**`zod`**):
-    The input schema defines a set of parameters for querying sales product information. Key parameters include:
-    *   `saleProductCode` (string, optional): Unique code for a specific sales product.
-    *   `reservationCode` (string, optional): Code for a specific reservation.
-    *   `startDate` (number, **required**): Start date for search (YYYYMMDD).
-    *   `endDate` (number, **required**): End date for search (YYYYMMDD).
-    *   `productAttributeCode` (enum, optional): Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes.
-    *   `productAreaCode` (enum, optional): Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes.
-    *   `saleProductName` (string, optional): Keywords for product name.
-    *   Pagination parameters (`pageSize`, `pageNumber`, `totalRowCount`, `totalPageCount`) are also available as optional numbers.
+    The input schema defines a set of parameters for querying sales product information. The authoritative descriptions for these parameters are maintained in Korean within the source code (`src/tools/retrieveSaleProductInformation.js`) and are detailed in the table below. Key parameters include `saleProductCode`, `reservationCode`, `startDate` (required), `endDate` (required), `productAttributeCode` (enum), `productAreaCode` (enum), `saleProductName`, and pagination parameters.
 
-    Refer to the `📊 Input Parameter Structure` table below for a detailed breakdown.
+    Refer to the `📊 Input Parameter Structure` table below for a detailed breakdown with Korean descriptions.
 
 *   📊 **Input Parameter Structure**
 
-    | Parameter               | Type   | Required? | Allowed Values                                     | Description                                                                                                                               |
-    | :---------------------- | :----- | :-------- | :------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-    | 👑 `saleProductCode`    | string | Optional  | N/A                                                | The unique code for a specific sales product. Used when you want to look up a particular item.                                          |
-    | 🔖 `reservationCode`    | string | Optional  | N/A                                                | The code associated with a specific reservation. Used to find products related to that reservation.                                       |
-    | 📅 `startDate`          | number | **Required** | N/A                                                | The start date for searching products, in YYYYMMDD format. This is a required field.                                                      |
-    | 📅 `endDate`            | number | **Required** | N/A                                                | The end date for searching products, in YYYYMMDD format. This is a required field.                                                        |
-    | ✨ `productAttributeCode` | enum   | Optional  | `P (Package), W (Wedding), B (Activity)`           | Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes. |
-    | 🌍 `productAreaCode`     | enum   | Optional  | `AA (Bangkok, Southeast Asia), C1 (China), HH (Americas), J0 (Japan)` | Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes. |
-    | 🏷️ `saleProductName`     | string | Optional  | N/A                                                | Keywords from the user's query that refer to the product name.                                                                          |
-    | 📄 `pageSize`           | number | Optional  | N/A                                                | The maximum number of products to display on a single page.                                                                               |
-    | 🔢 `pageNumber`         | number | Optional  | N/A                    | The page number of the results you want to view.                                                                                          |
-    | 🧮 `totalRowCount`      | number | Optional  | N/A                    | The total count of products matching the search criteria.                                                                                 |
-    | 📖 `totalPageCount`     | number | Optional  | N/A                    | The total number of pages, calculated based on `pageSize` and `totalRowCount`.                                                            |
+    | Parameter               | Type   | Required? | Allowed Values                                     | Description                                                                                                                                |
+    | :---------------------- | :----- | :-------- | :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+    | 👑 `saleProductCode`    | string | Optional  | N/A                                                | 특정 판매 상품을 조회할 때 사용하는 고유 코드입니다.                                                                                                     |
+    | 🔖 `reservationCode`    | string | Optional  | N/A                                                | 특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다.                                                                                                   |
+    | 📅 `startDate`          | number | **Required** | N/A                                                | 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                           |
+    | 📅 `endDate`            | number | **Required** | N/A                                                | 상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                           |
+    | ✨ `productAttributeCode` | enum   | Optional  | `P (패키지), W (웨딩), B (액티비티)`                 | 상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다.                                                                 |
+    | 🌍 `productAreaCode`     | enum   | Optional  | `AA (방콕, 동남아), C1 (중국), HH (미주), J0 (일본)`   | 상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다.                                                       |
+    | 🏷️ `saleProductName`     | string | Optional  | N/A                                                | 사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다.                                                                                                       |
+    | 📄 `pageSize`           | number | Optional  | N/A                                                | 한 페이지에 표시할 상품의 최대 개수를 지정합니다.                                                                                                        |
+    | 🔢 `pageNumber`         | number | Optional  | N/A                    | 조회할 결과의 페이지 번호를 지정합니다.                                                                                                              |
+    | 🧮 `totalRowCount`      | number | Optional  | N/A                    | 검색 조건에 해당하는 전체 상품의 개수입니다.                                                                                                            |
+    | 📖 `totalPageCount`     | number | Optional  | N/A                    | 전체 상품을 `pageSize`에 따라 나눈 총 페이지 수입니다.                                                                                                     |
 
 *   🧠 **Handler Logic**:
     1.  Logs entry, received input arguments, results, and errors using the central logger.

@@ -227,33 +227,25 @@ mcp-server/
     - `totalPageCount`: 전체 상품을 `pageSize`에 따라 나눈 총 페이지 수.
 
 *   📥 **입력 스키마** (**`zod`**):
-    입력 스키마는 판매 상품 정보 조회를 위한 다양한 파라미터를 정의합니다. 주요 파라미터는 다음과 같습니다:
-    *   `saleProductCode` (문자열, 선택): 특정 판매 상품의 고유 코드.
-    *   `reservationCode` (문자열, 선택): 특정 예약과 관련된 코드.
-    *   `startDate` (숫자, **필수**): 검색 시작일 (YYYYMMDD 형식).
-    *   `endDate` (숫자, **필수**): 검색 종료일 (YYYYMMDD 형식).
-    *   `productAttributeCode` (enum, 선택): 상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다.
-    *   `productAreaCode` (enum, 선택): 상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다.
-    *   `saleProductName` (문자열, 선택): 상품명 관련 키워드.
-    *   페이지네이션 파라미터 (`pageSize`, `pageNumber`, `totalRowCount`, `totalPageCount`) 또한 선택적인 숫자로 제공됩니다.
+    입력 스키마는 판매 상품 정보 조회를 위한 다양한 파라미터를 정의합니다. 이러한 파라미터에 대한 신뢰할 수 있는 설명은 소스 코드(`src/tools/retrieveSaleProductInformation.js`) 내에 한국어로 유지 관리되며 아래 표에 자세히 설명되어 있습니다. 주요 파라미터에는 `saleProductCode`, `reservationCode`, `startDate` (필수), `endDate` (필수), `productAttributeCode` (enum), `productAreaCode` (enum), `saleProductName` 및 페이지네이션 파라미터가 포함됩니다.
 
     자세한 내용은 아래 `📊 입력 파라미터 구조` 표를 참조하십시오.
 
 *   📊 **입력 파라미터 구조 (Input Parameter Structure)**
 
-    | 파라미터                | 타입   | 필수?    | 허용 값                                      | 설명                                                                                                                                      |
-    | :---------------------- | :----- | :------- | :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
-    | 👑 `saleProductCode`    | string | Optional | N/A                                          | The unique code for a specific sales product. Used when you want to look up a particular item.                                          |
-    | 🔖 `reservationCode`    | string | Optional | N/A                                          | The code associated with a specific reservation. Used to find products related to that reservation.                                       |
-    | 📅 `startDate`          | number | **필수** | N/A                                          | The start date for searching products, in YYYYMMDD format. This is a required field.                                                      |
-    | 📅 `endDate`            | number | **필수** | N/A                                          | The end date for searching products, in YYYYMMDD format. This is a required field.                                                        |
-    | ✨ `productAttributeCode` | enum   | Optional | `P (패키지), W (웨딩), B (액티비티)`           | Code representing the attribute of the product. Allowed values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Please provide one of these codes. |
-    | 🌍 `productAreaCode`     | enum   | Optional | `AA (방콕, 동남아), C1 (중국), HH (미주), J0 (일본)` | Code for the product's geographical area. Allowed values: 'AA' (Bangkok, Southeast Asia), 'C1' (China), 'HH' (Americas), 'J0' (Japan). Please provide one of these codes. |
-    | 🏷️ `saleProductName`     | string | Optional | N/A                                          | Keywords from the user's query that refer to the product name.                                                                          |
-    | 📄 `pageSize`           | number | Optional | N/A                                          | The maximum number of products to display on a single page.                                                                               |
-    | 🔢 `pageNumber`         | number | Optional | N/A                    | The page number of the results you want to view.                                                                                          |
-    | 🧮 `totalRowCount`      | number | Optional | N/A                    | The total count of products matching the search criteria.                                                                                 |
-    | 📖 `totalPageCount`     | number | Optional | N/A                    | The total number of pages, calculated based on `pageSize` and `totalRowCount`.                                                            |
+    | 파라미터                | 타입   | 필수?    | 허용 값                                      | 설명                                                                                                                                     |
+    | :---------------------- | :----- | :------- | :------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+    | 👑 `saleProductCode`    | string | Optional | N/A                                          | 특정 판매 상품을 조회할 때 사용하는 고유 코드입니다.                                                                                                   |
+    | 🔖 `reservationCode`    | string | Optional | N/A                                          | 특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다.                                                                                                 |
+    | 📅 `startDate`          | number | **필수** | N/A                                          | 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                         |
+    | 📅 `endDate`            | number | **필수** | N/A                                          | 상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                         |
+    | ✨ `productAttributeCode` | enum   | Optional | `P (패키지), W (웨딩), B (액티비티)`           | 상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다.                                                               |
+    | 🌍 `productAreaCode`     | enum   | Optional | `AA (방콕, 동남아), C1 (중국), HH (미주), J0 (일본)` | 상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다.                                                     |
+    | 🏷️ `saleProductName`     | string | Optional | N/A                                          | 사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다.                                                                                                     |
+    | 📄 `pageSize`           | number | Optional | N/A                                          | 한 페이지에 표시할 상품의 최대 개수를 지정합니다.                                                                                                      |
+    | 🔢 `pageNumber`         | number | Optional | N/A                    | 조회할 결과의 페이지 번호를 지정합니다.                                                                                                            |
+    | 🧮 `totalRowCount`      | number | Optional | N/A                    | 검색 조건에 해당하는 전체 상품의 개수입니다.                                                                                                          |
+    | 📖 `totalPageCount`     | number | Optional | N/A                    | 전체 상품을 `pageSize`에 따라 나눈 총 페이지 수입니다.                                                                                                   |
 
 *   🧠 **핸들러 로직**:
     1.  중앙 로거를 사용하여 진입점, 수신된 입력 인수, 결과 및 오류를 기록합니다.
