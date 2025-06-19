@@ -7,19 +7,27 @@ import { stripHtml } from "../utils/stripHtml.js";
 export const retrieveSaleProductInformationTool = {
   name: "retrieveSaleProductInformation",
   description: `
-    이 도구는 판매 상품 일정 및 상세 정보를 조회하는 데 사용됩니다.
-    다음 검색 조건들을 활용하여 상품을 필터링하고 원하는 정보를 얻을 수 있습니다.
+    1건 이상의 판매상품정보를 조회하고 싶어.
+    하지만 코드값을 알지 못하므로 아래 순서대로 단계적으로 함수를 호출해서 적절한 상품코드로 조회할 수 있도록 도와줘.
+
+    1. 사용자 질의(예: "동남아 지역 / 일본/동남아" → 지역 정보)를 기준으로 getBasicCommonCodeByQueryTool() 함수를 호출해줘. (지역정보만 조회하는 함수는 아님)
+    2. getBasicCommonCodeByQueryTool의 결과 목록 중에서 사용자 질의와 가장 잘 일치하는 코드나 값을 추출해서 getDetailCommonCodeByQueryTool() 함수를 호출해줘.
+    3. getDetailCommonCodeByQueryTool의 결과 코드 중 사용자 질의를 가장 잘 반영하는 하나 이상의 코드를 사용해서 retrieveSaleProductInformationTool() 함수를 호출해줘.
+      - 판매상품정보가 1건 이상 조회될 수 있도록 적절한 코드들을 사용해줘.
+
+    각 함수는 반드시 하나씩만 순차적으로 호출해줘.
+    다음 함수를 호출하기 전에는 반드시 이전 함수의 결과를 먼저 받은 후 처리해줘.
 
     **필수 입력 파라미터:**
     - \`startDate\` (시작일/출발일): 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식).
     - \`endDate\` (종료일/도착일): 상품 검색을 위한 종료 날짜 (YYYYMMDD 형식).
-    - \`prodAreaCd\` (지역코드): 상품이 속한 지역의 코드. 사용자 질의(예: '유럽', '아시아', '프랑스')에 따라 \`getDetailCommonCodeByQuery\`을 사용하여 정확한 지역 코드를 조회하여 입력해야 합니다. 만약 코드를 찾을 수 없거나 특정 지역을 지정하지 않는 경우 'A0'을 기본값으로 사용합니다.
+    - \`productAreaCd\` (지역코드): 상품이 속한 지역의 코드. 사용자 질의(예: '유럽', '아시아', '프랑스')에 따라 \`getDetailCommonCodeByQuery\`을 사용하여 정확한 지역 코드를 조회하여 입력해야 합니다. 만약 코드를 찾을 수 없거나 특정 지역을 지정하지 않는 경우 'A0'을 기본값으로 사용합니다.
 
     **선택 입력 파라미터:**
-    - \`saleProdCd\` (판매상품코드): 특정 판매 상품을 조회할 때 사용하는 고유 코드.
-    - \`resCd\` (예약코드): 특정 예약과 관련된 상품을 조회할 때 사용하는 코드.
-    - \`prodAttrCd\` (상품속성코드): 상품의 속성(예: '패키지', '자유여행', '골프')을 나타내는 코드. \`getDetailCommonCodeByQuery\`을 사용하여 사용자 질의에 맞는 코드값을 조회하여 입력합니다.
-    - \`saleProdNm\` (상품명): 사용자 질의에서 상품명을 의미하는 텍스트 키워드.
+    - \`saleProductCode\` (판매상품코드): 특정 판매 상품을 조회할 때 사용하는 고유 코드.
+    - \`reservationCode\` (예약코드): 특정 예약과 관련된 상품을 조회할 때 사용하는 코드.
+    - \`productAttributeCode\` (상품속성코드): 상품의 속성(예: '패키지', '자유여행', '골프')을 나타내는 코드. \`getDetailCommonCodeByQuery\`을 사용하여 사용자 질의에 맞는 코드값을 조회하여 입력합니다.
+    - \`saleProductName\` (상품명): 사용자 질의에서 상품명을 의미하는 텍스트 키워드.
 
     **페이지네이션 파라미터 (조회 시 입력 가능):**
     - \`pageSize\` (페이지당 상품 수): 한 페이지에 표시할 상품의 최대 개수를 지정합니다.
@@ -27,41 +35,47 @@ export const retrieveSaleProductInformationTool = {
     - \`totalRowCount\` (총 상품 수): 검색 조건에 해당하는 전체 상품의 개수.
     - \`totalPageCount\` (총 페이지 수): 전체 상품을 \`pageSize\`에 따라 나눈 총 페이지 수.
     `,
-  inputSchema: z.object({
-    saleProdCd: z.string().optional(), // 선택값으로 변경
-    resCd: z.string().optional(), // 선택값
-    startDate: z.string().min(1), // 필수값
-    endDate: z.string().min(1), // 필수값
-    prodAttrCd: z.string().optional(), // 선택값
-    prodAreaCd: z.string().min(1), // 필수값
-    saleProdNm: z.string().optional(), // 선택값
+  inputSchema: {
+    saleProductCode: z.string().optional(), // 선택값으로 변경
+    reservationCode: z.string().optional(), // 선택값
+    startDate: z.number().min(1), // 필수값
+    endDate: z.number().min(1), // 필수값
+    productAttributeCode: z.string().optional(), // 선택값
+    productAreaCode: z.string().optional(), // 필수값
+    saleProductName: z.string().optional(), // 선택값
     pageSize: z.number().optional(),
     pageNumber: z.number().optional(),
     totalRowCount: z.number().optional(),
     totalPageCount: z.number().optional(),
-  }),
-  async handler({
-    saleProdCd,
-    resCd,
-    startDate,
-    endDate,
-    prodAttrCd,
-    prodAreaCd,
-    saleProdNm,
-    pageSize,
-    pageNumber,
-    totalRowCount,
-    totalPageCount,
-  }) {
-    const functionName = "retrieveSaleProductInformationTool.handler";
-    const params = {
-      saleProdCd,
-      resCd,
+  },
+  async handler(inputArguments) {
+    console.log(
+      "Received inputArguments by handler:",
+      JSON.stringify(inputArguments, null, 2)
+    );
+
+    const {
+      saleProductCode,
+      reservationCode,
       startDate,
       endDate,
-      prodAttrCd,
-      prodAreaCd,
-      saleProdNm,
+      productAttributeCode,
+      productAreaCode,
+      saleProductName,
+      pageSize,
+      pageNumber,
+      totalRowCount,
+      totalPageCount,
+    } = inputArguments; //구조분해할당
+    const functionName = "retrieveSaleProductInformationTool.handler";
+    const params = {
+      saleProductCode,
+      reservationCode,
+      startDate,
+      endDate,
+      productAttributeCode,
+      productAreaCode,
+      saleProductName,
       pageSize,
       pageNumber,
       totalRowCount,

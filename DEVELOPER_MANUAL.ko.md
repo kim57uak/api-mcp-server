@@ -195,6 +195,31 @@ mcp-server/
     }
     ```
 
+### 3.5. 🛠️ `retrieveSaleProductInformation` 도구
+
+*   🎯 **목적**: `saleProdCd`를 기반으로 특정 판매 상품의 상세 정보(스케줄 및 관련 공통 코드 포함)를 조회합니다. 이 도구는 `getSaleProductSchedule` 및 `getDetailCommonCodeByQuery`와 유사한 기능을 결합하지만 단일 상품에 중점을 둡니다.
+*   📥 **입력 스키마** (**`zod`**):
+    ```javascript
+    { saleProdCd: z.string().min(1) } // saleProdCd는 비어 있지 않은 문자열이어야 합니다.
+    ```
+*   🧠 **핸들러 로직**:
+    1.  중앙 로거를 사용하여 항목, 매개변수, 결과 및 오류를 기록합니다.
+    2.  `saleProdCd`를 입력으로 받습니다.
+    3.  상품의 스케줄 데이터를 가져오기 위해 `packageService.getSchedules(saleProdCd)`를 호출합니다.
+    4.  관련 공통 코드를 가져오기 위해 `packageService.getDetailCommonCodeByQuery(saleProdCd)`를 호출합니다. (`saleProdCd`가 관련 공통 코드에 대한 쿼리로 사용될 수 있다고 가정하거나, 상품을 기반으로 보다 구체적인 쿼리 구성이 포함될 수 있습니다).
+    5.  스케줄 정보와 공통 코드 데이터를 단일 응답 객체로 결합합니다.
+    6.  결합된 데이터를 MCP 콘텐츠 구조(타입 `text`, JSON 문자열화)로 포맷합니다.
+    7.  어떤 단계에서든 예외가 발생하면 포맷된 콘텐츠 또는 오류 객체를 반환합니다.
+*   ✅ **출력 (성공 예시)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"saleProdCd\": \"PROD12345\",\n  \"productName\": \"초특가 여름 세일 패키지\",\n  \"schedules\": [\n    { \"id\": \"scheduleEvent1\", \"time\": \"2024-08-01T10:00:00Z\", \"event\": \"세일 시작\" },\n    { \"id\": \"scheduleEvent2\", \"time\": \"2024-08-15T17:00:00Z\", \"event\": \"중간 세일 프로모션\" }\n  ],\n  \"commonCodes\": {\n    \"PROD_ATTR_CD\": [\"온라인 전용\", \"한정 재고\"],\n    \"REGION_CD\": [\"미국 서부\", \"미국 동부\"]\n  },\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
 ## 4. ⚙️ 설정 관리
 
 애플리케이션의 설정, 특히 서비스 통합을 위한 설정은 중앙에서 관리됩니다.

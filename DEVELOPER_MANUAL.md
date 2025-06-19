@@ -197,6 +197,31 @@ mcp-server/
     }
     ```
 
+### 3.5. 🛠️ `retrieveSaleProductInformation` Tool
+
+*   🎯 **Purpose**: Retrieves detailed information for a specific sales product, including its schedule and related common codes, based on a `saleProdCd`. This tool combines functionalities similar to `getSaleProductSchedule` and `getDetailCommonCodeByQuery` but is focused on a single product.
+*   📥 **Input Schema** (**`zod`**):
+    ```javascript
+    { saleProdCd: z.string().min(1) } // saleProdCd must be a non-empty string
+    ```
+*   🧠 **Handler Logic**:
+    1.  Logs entry, parameters, results, and errors using the central logger.
+    2.  Receives `saleProdCd` as input.
+    3.  Calls `packageService.getSchedules(saleProdCd)` to fetch schedule data for the product.
+    4.  Calls `packageService.getDetailCommonCodeByQuery(saleProdCd)` to fetch related common codes. (Assuming `saleProdCd` can be used as a query for relevant common codes, or this might involve a more specific query construction based on the product).
+    5.  Combines the schedule information and common code data into a single response object.
+    6.  Formats the combined data into the MCP content structure (type `text`, JSON stringified).
+    7.  Returns the formatted content or an error object if an exception occurs during any step.
+*   ✅ **Output (Success Example)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"saleProdCd\": \"PROD12345\",\n  \"productName\": \"Super Summer Sale Package\",\n  \"schedules\": [\n    { \"id\": \"scheduleEvent1\", \"time\": \"2024-08-01T10:00:00Z\", \"event\": \"Sale Kick-off\" },\n    { \"id\": \"scheduleEvent2\", \"time\": \"2024-08-15T17:00:00Z\", \"event\": \"Mid-Sale Promotion\" }\n  ],\n  \"commonCodes\": {\n    \"PROD_ATTR_CD\": [\"ONLINE_ONLY\", \"LIMITED_STOCK\"],\n    \"REGION_CD\": [\"US_WEST\", \"US_EAST\"]\n  },\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
 ## 4. ⚙️ Configuration Management
 
 The application's configurations, especially for service integrations, are managed centrally.
