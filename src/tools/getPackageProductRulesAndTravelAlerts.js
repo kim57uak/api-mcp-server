@@ -1,20 +1,14 @@
 // src/tools/getPackageProductRulesAndTravelAlerts.js
+import { z } from "zod";
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 
 export const getPackageProductRulesAndTravelAlertsTool = {
   name: "getPackageProductRulesAndTravelAlerts",
   description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 약관 및 유의사항, 여행경보 등을 조회합니다.",
-  parameters: {
-    type: "object",
-    properties: {
-      saleProductCode: {
-        type: "string",
-        description: "조회할 판매 상품의 코드",
-      },
-    },
-    required: ["saleProductCode"],
-  },
+  inputSchema: z.object({
+    saleProductCode: z.string().min(1, { message: "saleProductCode is required." }),
+  }),
   execute: async ({ saleProductCode }) => {
     logger.info(
       `Executing getPackageProductRulesAndTravelAlerts tool with saleProductCode: ${saleProductCode}`

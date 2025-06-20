@@ -1,20 +1,14 @@
 // src/tools/getPackageProductInfo.js
+import { z } from "zod";
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 
 export const getPackageProductInfoTool = {
   name: "getPackageProductInfo",
   description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품 정보를 조회합니다.",
-  parameters: {
-    type: "object",
-    properties: {
-      saleProductCode: {
-        type: "string",
-        description: "조회할 판매 상품의 코드",
-      },
-    },
-    required: ["saleProductCode"],
-  },
+  inputSchema: z.object({
+    saleProductCode: z.string().min(1, { message: "saleProductCode is required." }),
+  }),
   execute: async ({ saleProductCode }) => {
     logger.info(
       `Executing getPackageProductInfo tool with saleProductCode: ${saleProductCode}`
