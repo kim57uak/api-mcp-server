@@ -26,6 +26,89 @@ function findBestCodeByQuery(query, codeMap) {
   return null;
 }
 
+// Helper function to build the request body for retrieveSaleProductInformation
+function _buildRetrieveSaleProductRequestBody({
+  saleProductCode,
+  reservationCode,
+  startDate,
+  endDate,
+  productAttributeCode,
+  productAreaCode,
+  saleProductName,
+  brandCd,
+  pageSize,
+  pageNumber,
+  totalRowCount,
+  totalPageCount,
+}) {
+  return {
+    productCodeDivision: "P", // prodCdDv
+    productCode: saleProductCode || "", // prodCd
+    productSeparator: "", // prodSprtrCd
+    reservationCode: reservationCode || "", // resCd
+    productAreaCode: productAreaCode || "AA", // prodAreaCd
+    teamDivisionCode: "", // teamDvCd
+    arrangementEmployeeNumber: "", // arngRpprEmpn
+    merchandiserEmployeeNumber: "", // mrchRpprEmpn
+    airEmployeeNumber: "", // airRpprEmpn
+    directPurchaseHotelEmployeeNumber: "", // dpurcRpprEmpn
+    departureArrivalDivisionCode: "S", // depArrDvCd
+    startDate: startDate, // startDate
+    endDate: endDate, // endDate
+    productBrowseTypeCode: "", // prodBrwsTypeCd
+    productTypeCode: "", // prodTypeCd
+    transitTypeCode: "", // trnpTypeCd
+    allYn: "A", // allYn
+    sundayYn: "", // sndyYn
+    mondayYn: "", // monYn
+    tuesdayYn: "", // tueYn
+    wednesdayYn: "", // wedYn
+    thursdayYn: "", // thuYn
+    fridayYn: "", // friYn
+    saturdayYn: "", // satYn
+    productBrandCode: brandCd || "", // prodBrndCd
+    promotionCode: "", // promCd
+    productDivisionCode: "", // prodDvCd
+    themeCode: "", // thmCd
+    inventoryPatternId: "", // invPtnId
+    departureAirCode: "", // depAirCd
+    departureFlightCode: "", // depFlgtCd
+    arrivalAirCode: "", // arrAirCd
+    arrivalFlightCode: "", // arrFlgtCd
+    departureCityCode: "", // depCityCd
+    teamDepartmentCode: "", // teamDeptCd
+    saleProductName: saleProductName || "", // saleProdNm
+    hotelCode: "", // htlCd
+    landCode: "", // landCd
+    adultAmount: "", // adtAmt
+    basisFeeRate: null, // bassFeeRate
+    officialCertificationFeeRate: null, // ocrtFeeRate
+    affiliatedConcernFeeRate: null, // afcnFeeRate
+    depositKindCode: "", // depoKndCd
+    productAttributeCode: productAttributeCode || "", // prodAttrCd
+    tempArngNm: "", // not mapped (custom)
+    tempMrchNm: "", // not mapped (custom)
+    tempAirNm: "", // not mapped (custom)
+    tempDpurcNm: "", // not mapped (custom)
+    tempCard: "", // not mapped (custom)
+    productAreaExceptCode: "", // prodAreaEtcCd
+    stateCodeInformation: "", // scodInfo
+    cityCodeInformation: "", // cityCdInfo
+    specificAgentCode: "", // agtCd
+    supplierHeadOfficeDispatchExistenceOrNonexistence: "N", // splyStaffAuth
+
+    pageVo: {
+      pageSize: pageSize || 100,
+      pageNumber: pageNumber || 1,
+      totalRowCount: totalRowCount || 0,
+      totalPageCount: totalPageCount || 0,
+    },
+    header: {
+      langCode: defaultApiParams.commonCodeLang,
+    },
+  };
+}
+
 export const packageService = {
   getSchedules: async (saleProdCd) => {
     logger.info(
@@ -95,72 +178,7 @@ export const packageService = {
       const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSaleProdBrwsTab/v1.00`;
 
       // 요청 본문을 동적으로 생성
-      const requestBody = {
-        productCodeDivision: "P", // prodCdDv
-        productCode: saleProductCode || "", // prodCd
-        productSeparator: "", // prodSprtrCd
-        reservationCode: reservationCode || "", // resCd
-        productAreaCode: productAreaCode || "AA", // prodAreaCd
-        teamDivisionCode: "", // teamDvCd
-        arrangementEmployeeNumber: "", // arngRpprEmpn
-        merchandiserEmployeeNumber: "", // mrchRpprEmpn
-        airEmployeeNumber: "", // airRpprEmpn
-        directPurchaseHotelEmployeeNumber: "", // dpurcRpprEmpn
-        departureArrivalDivisionCode: "S", // depArrDvCd
-        startDate: startDate, // startDate
-        endDate: endDate, // endDate
-        productBrowseTypeCode: "", // prodBrwsTypeCd
-        productTypeCode: "", // prodTypeCd
-        transitTypeCode: "", // trnpTypeCd
-        allYn: "A", // allYn
-        sundayYn: "", // sndyYn
-        mondayYn: "", // monYn
-        tuesdayYn: "", // tueYn
-        wednesdayYn: "", // wedYn
-        thursdayYn: "", // thuYn
-        fridayYn: "", // friYn
-        saturdayYn: "", // satYn
-        productBrandCode: brandCd || "", // prodBrndCd
-        promotionCode: "", // promCd
-        productDivisionCode: "", // prodDvCd
-        themeCode: "", // thmCd
-        inventoryPatternId: "", // invPtnId
-        departureAirCode: "", // depAirCd
-        departureFlightCode: "", // depFlgtCd
-        arrivalAirCode: "", // arrAirCd
-        arrivalFlightCode: "", // arrFlgtCd
-        departureCityCode: "", // depCityCd
-        teamDepartmentCode: "", // teamDeptCd
-        saleProductName: saleProductName || "", // saleProdNm
-        hotelCode: "", // htlCd
-        landCode: "", // landCd
-        adultAmount: "", // adtAmt
-        basisFeeRate: null, // bassFeeRate
-        officialCertificationFeeRate: null, // ocrtFeeRate
-        affiliatedConcernFeeRate: null, // afcnFeeRate
-        depositKindCode: "", // depoKndCd
-        productAttributeCode: productAttributeCode || "", // prodAttrCd
-        tempArngNm: "", // not mapped (custom)
-        tempMrchNm: "", // not mapped (custom)
-        tempAirNm: "", // not mapped (custom)
-        tempDpurcNm: "", // not mapped (custom)
-        tempCard: "", // not mapped (custom)
-        productAreaExceptCode: "", // prodAreaEtcCd
-        stateCodeInformation: "", // scodInfo
-        cityCodeInformation: "", // cityCdInfo
-        specificAgentCode: "", // agtCd
-        supplierHeadOfficeDispatchExistenceOrNonexistence: "N", // splyStaffAuth
-
-        pageVo: {
-          pageSize: pageSize || 100,
-          pageNumber: pageNumber || 1,
-          totalRowCount: totalRowCount || 0,
-          totalPageCount: totalPageCount || 0,
-        },
-        header: {
-          langCode: defaultApiParams.commonCodeLang,
-        },
-      };
+      const requestBody = _buildRetrieveSaleProductRequestBody(params);
 
       // 진단용 로그 추가
       console.log("requestBody:", JSON.stringify(requestBody, null, 2));
