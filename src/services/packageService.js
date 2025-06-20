@@ -6,27 +6,10 @@ import axios from "axios";
 import logger from "../utils/logger.cjs";
 import {
   apiUrls,
-  codeMappings,
   defaultApiParams,
 } from "../config/serviceConfig.js";
-import { callApi } from '../../utils/apiUtils.js';
+import { callApi } from '../utils/apiUtils.js';
 import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
-
-// Modified findBestCodeByQuery to accept codeMap as a parameter
-function findBestCodeByQuery(query, codeMap) {
-  const lowerQuery = query.toLowerCase();
-  logger.info(`findBestCodeByQuery : lowerQuery : ${lowerQuery}`);
-  for (const { code, keywords } of codeMap) {
-    // Use the passed codeMap
-    logger.info(
-      `findBestCodeByQuery : code  = ${code} ,keywords = ${keywords},lowerQuery = ${lowerQuery}`
-    );
-    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-      return code;
-    }
-  }
-  return null;
-}
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
