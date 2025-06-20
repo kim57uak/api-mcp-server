@@ -163,12 +163,12 @@ export const packageService = {
       };
 
       // 진단용 로그 추가
-      console.log('requestBody:', JSON.stringify(requestBody, null, 2));
+      console.log("requestBody:", JSON.stringify(requestBody, null, 2));
       logger.info(`requestBody: ${JSON.stringify(requestBody)}`);
 
       const axiosConfig = {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       };
 
@@ -280,7 +280,8 @@ export const packageService = {
     try {
       const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdInfo2/v1.00`;
       const requestBody = {
-        saleProductCode: saleProductCode,
+        pkgCd: saleProductCode,
+        inpPathCd:"WPP",
         header: {
           langCode: defaultApiParams.commonCodeLang,
         },
@@ -311,7 +312,7 @@ export const packageService = {
     try {
       const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdChcStsngInfo/v1.00`;
       const requestBody = {
-        saleProductCode: saleProductCode,
+        pkgCd: saleProductCode,
         header: {
           langCode: defaultApiParams.commonCodeLang,
         },
@@ -345,7 +346,7 @@ export const packageService = {
     try {
       const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgRefnMtr/v1.00`;
       const requestBody = {
-        saleProductCode: saleProductCode,
+        pkgCd: saleProductCode,
         header: {
           langCode: defaultApiParams.commonCodeLang,
         },
