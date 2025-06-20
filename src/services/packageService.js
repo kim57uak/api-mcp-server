@@ -65,6 +65,7 @@ export const packageService = {
     productAttributeCode,
     productAreaCode,
     saleProductName,
+    brandCd,
     pageSize,
     pageNumber,
     totalRowCount,
@@ -78,6 +79,7 @@ export const packageService = {
       productAttributeCode,
       productAreaCode,
       saleProductName,
+      brandCd,
       pageSize,
       pageNumber,
       totalRowCount,
@@ -118,7 +120,7 @@ export const packageService = {
         thursdayYn: "", // thuYn
         fridayYn: "", // friYn
         saturdayYn: "", // satYn
-        productBrandCode: "", // prodBrndCd
+        productBrandCode: brandCd || "", // prodBrndCd
         promotionCode: "", // promCd
         productDivisionCode: "", // prodDvCd
         themeCode: "", // thmCd
@@ -143,7 +145,7 @@ export const packageService = {
         tempAirNm: "", // not mapped (custom)
         tempDpurcNm: "", // not mapped (custom)
         tempCard: "", // not mapped (custom)
-        productAreaExceptCode: "G", // prodAreaEtcCd
+        productAreaExceptCode: "", // prodAreaEtcCd
         stateCodeInformation: "", // scodInfo
         cityCodeInformation: "", // cityCdInfo
         specificAgentCode: "", // agtCd
@@ -160,13 +162,17 @@ export const packageService = {
         },
       };
 
-      logger.info(
-        `retrieveSaleProductInformation completed successfully with result: ${JSON.stringify(
-          requestBody
-        )}`
-      );
+      // 진단용 로그 추가
+      console.log('requestBody:', JSON.stringify(requestBody, null, 2));
+      logger.info(`requestBody: ${JSON.stringify(requestBody)}`);
 
-      const res = await axios.post(url, requestBody);
+      const axiosConfig = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const res = await axios.post(url, requestBody, axiosConfig);
       logger.info(
         `retrieveSaleProductInformation completed successfully with result: ${JSON.stringify(
           res.data
@@ -219,6 +225,7 @@ export const packageService = {
       const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
       const res = await axios.post(url, {
         comBscCd: query,
+        comBscCdNm: query,
         header: {
           langCode: defaultApiParams.commonCodeLang, // Use configured lang code
         },
@@ -247,6 +254,7 @@ export const packageService = {
       const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComBscCdList/v1.00`;
       const res = await axios.post(url, {
         comBscCd: query,
+        comBscCdNm: query,
         header: {
           langCode: defaultApiParams.commonCodeLang, // Use configured lang code
         },
@@ -266,21 +274,21 @@ export const packageService = {
     }
   },
   retrieveAreaCode: async () => {
+    logger.info(`Executing retrieveAreaCode`);
     try {
       const url = `${apiUrls.olsQaBase}/pkg/api/gnis/common/cbc/compkgarea/getComPkgAreaCboListForProduct/v1.00`;
       const res = await axios.post(url, {
-        comBscCd: query,
+        langCd: "ko-KR",
         header: {
-          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
+          langCode: defaultApiParams.commonCodeLang,
         },
       });
-      const result = { query, data: res.data };
       logger.info(
         `retrieveAreaCode completed successfully with result: ${JSON.stringify(
-          result
+          res.data
         )}`
       );
-      return result;
+      return res.data;
     } catch (error) {
       logger.error(`Error in retrieveAreaCode: ${error.message}`, {
         error: error.stack,

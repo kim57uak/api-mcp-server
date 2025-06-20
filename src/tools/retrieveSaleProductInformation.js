@@ -1,5 +1,10 @@
 // src/tools/getSaleProductSchedule.js
 import { z } from "zod";
+
+// Define Enums
+const ProductAttributeCodeEnum = z.enum(["P", "W", "B"]);
+const ProductAreaCodeEnum = z.enum(["AA", "C1", "HH", "J0"]);
+
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
@@ -21,7 +26,7 @@ export const retrieveSaleProductInformationTool = {
     **필수 입력 파라미터:**
     - \`startDate\` (시작일/출발일): 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식).
     - \`endDate\` (종료일/도착일): 상품 검색을 위한 종료 날짜 (YYYYMMDD 형식).
-    - \`productAreaCd\` (지역코드): 상품이 속한 지역의 코드. 사용자 질의(예: '유럽', '아시아', '프랑스')에 따라 \`getDetailCommonCodeByQuery\`을 사용하여 정확한 지역 코드를 조회하여 입력해야 합니다. 만약 코드를 찾을 수 없거나 특정 지역을 지정하지 않는 경우 'A0'을 기본값으로 사용합니다.
+    - \`productAreaCd\` (지역코드): 상품이 속한 지역의 코드값(예: 'A0'은 동남아 지역). 사용자 질의(예: '유럽', '아시아', '프랑스')에 따라 \`getDetailCommonCodeByQuery\`을 사용하여 정확한 지역 코드를 조회하여 입력해야 합니다. 만약 코드를 찾을 수 없거나 특정 지역을 지정하지 않는 경우 'A0'을 기본값으로 사용합니다.
 
     **선택 입력 파라미터:**
     - \`saleProductCode\` (판매상품코드): 특정 판매 상품을 조회할 때 사용하는 고유 코드.
@@ -36,17 +41,58 @@ export const retrieveSaleProductInformationTool = {
     - \`totalPageCount\` (총 페이지 수): 전체 상품을 \`pageSize\`에 따라 나눈 총 페이지 수.
     `,
   inputSchema: {
-    saleProductCode: z.string().optional(), // 선택값으로 변경
-    reservationCode: z.string().optional(), // 선택값
-    startDate: z.number().min(1), // 필수값
-    endDate: z.number().min(1), // 필수값
-    productAttributeCode: z.string().optional(), // 선택값
-    productAreaCode: z.string().optional(), // 필수값
-    saleProductName: z.string().optional(), // 선택값
-    pageSize: z.number().optional(),
-    pageNumber: z.number().optional(),
-    totalRowCount: z.number().optional(),
-    totalPageCount: z.number().optional(),
+    saleProductCode: z
+      .string()
+      .optional()
+      .describe("특정 판매 상품을 조회할 때 사용하는 고유 코드입니다."),
+    reservationCode: z
+      .string()
+      .optional()
+      .describe("특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다."),
+    startDate: z
+      .number()
+      .min(1)
+      .describe(
+        "상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."
+      ), // 필수값
+    endDate: z
+      .number()
+      .min(1)
+      .describe(
+        "상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."
+      ), // 필수값
+    productAttributeCode: z
+      .string()
+      .optional()
+      .describe("영문 1자리 상품속성코드입니다."), // 선택값
+    productAreaCode: z
+      .string()
+      .optional()
+      .describe("영문과 숫자가 조합된 2자리 지역코드를 입력해야합니다."), // 필수값
+    saleProductName: z
+      .string()
+      .optional()
+      .describe("사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다."), // 선택값
+    brandCode: z
+      .string()
+      .optional()
+      .describe("사용자 질의에서 브랜드 코드를 의미하는 텍스트 키워드입니다."), // 선택값
+    pageSize: z
+      .number()
+      .optional()
+      .describe("한 페이지에 표시할 상품의 최대 개수를 지정합니다."),
+    pageNumber: z
+      .number()
+      .optional()
+      .describe("조회할 결과의 페이지 번호를 지정합니다."),
+    totalRowCount: z
+      .number()
+      .optional()
+      .describe("검색 조건에 해당하는 전체 상품의 개수입니다."),
+    totalPageCount: z
+      .number()
+      .optional()
+      .describe("전체 상품을 `pageSize`에 따라 나눈 총 페이지 수입니다."),
   },
   async handler(inputArguments) {
     console.log(

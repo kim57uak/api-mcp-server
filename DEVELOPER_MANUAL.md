@@ -199,25 +199,72 @@ mcp-server/
 
 ### 3.5. 🛠️ `retrieveSaleProductInformation` Tool
 
-*   🎯 **Purpose**: Retrieves detailed information for a specific sales product, including its schedule and related common codes, based on a `saleProdCd`. This tool combines functionalities similar to `getSaleProductSchedule` and `getDetailCommonCodeByQuery` but is focused on a single product.
+*   🎯 **Purpose**:
+    Retrieves information for one or more sales products.
+    If you don't know the specific codes, please follow these steps to use the functions sequentially to find the appropriate product codes:
+
+    1. Based on the user's query (e.g., "Southeast Asia region / Japan/Southeast Asia" → region information), call the `getBasicCommonCodeByQueryTool()` function. (This function is not limited to querying region information only.)
+    2. From the list of results from `getBasicCommonCodeByQueryTool`, extract the code or value that best matches the user's query and call the `getDetailCommonCodeByQueryTool()` function.
+    3. Using one or more codes from the `getDetailCommonCodeByQueryTool` results that best reflect the user's query, call the `retrieveSaleProductInformationTool()` function.
+      - Use appropriate codes to ensure that one or more sales product information items are retrieved.
+
+    Each function must be called sequentially, one at a time.
+    Ensure you receive the result from the previous function before calling the next one.
+
+    **Required Input Parameters:**
+    - `startDate`: The start date for searching products (YYYYMMDD format).
+    - `endDate`: The end date for searching products (YYYYMMDD format).
+
+    **Optional Input Parameters:**
+    - `saleProductCode`: The unique code for a specific sales product. Used when you want to look up a particular item.
+    - `reservationCode`: The code associated with a specific reservation. Used to find products related to that reservation.
+    - `productAttributeCode`: Code representing the attribute of the product. Select from predefined values: 'P' (Package), 'W' (Wedding), 'B' (Activity). Uses `getDetailCommonCodeByQuery` to find the matching code based on user query if needed.
+    - `productAreaCode`: Code for the product's geographical area. Select from predefined values: 'AA' (Bangkok), 'C1' (China), 'HH' (Americas), 'J0' (Japan). User queries (e.g., 'Europe', 'Asia', 'France') should be resolved to these codes using `getDetailCommonCodeByQuery`.
+    - `saleProductName`: Keywords from the user's query that refer to the product name.
+
+    **Pagination Parameters (optional for retrieval):**
+    - `pageSize`: The maximum number of products to display on a single page.
+    - `pageNumber`: The page number of the results you want to view.
+    - `totalRowCount`: The total count of products matching the search criteria.
+    - `totalPageCount`: The total number of pages, calculated based on `pageSize` and `totalRowCount`.
+
 *   📥 **Input Schema** (**`zod`**):
-    ```javascript
-    { saleProdCd: z.string().min(1) } // saleProdCd must be a non-empty string
-    ```
+    The input schema defines a set of parameters for querying sales product information. The authoritative descriptions for these parameters are maintained in Korean within the source code (`src/tools/retrieveSaleProductInformation.js`) and are detailed in the table below. Key parameters include `saleProductCode`, `reservationCode`, `startDate` (required), `endDate` (required), `productAttributeCode` (enum), `productAreaCode` (enum), `saleProductName`, and pagination parameters.
+
+    Refer to the `📊 Input Parameter Structure` table below for a detailed breakdown with Korean descriptions.
+
+*   📊 **Input Parameter Structure**
+
+    | Parameter               | Type   | Required? | Allowed Values                                     | Description                                                                                                                                |
+    | :---------------------- | :----- | :-------- | :------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+    | 👑 `saleProductCode`    | string | Optional  | N/A                                                | 특정 판매 상품을 조회할 때 사용하는 고유 코드입니다.                                                                                                     |
+    | 🔖 `reservationCode`    | string | Optional  | N/A                                                | 특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다.                                                                                                   |
+    | 📅 `startDate`          | number | **Required** | N/A                                                | 상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                           |
+    | 📅 `endDate`            | number | **Required** | N/A                                                | 상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다.                                                                                           |
+    | ✨ `productAttributeCode` | enum   | Optional  | `P (패키지), W (웨딩), B (액티비티)`                 | 상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다.                                                                 |
+    | 🌍 `productAreaCode`     | enum   | Optional  | `AA (방콕, 동남아), C1 (중국), HH (미주), J0 (일본)`   | 상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다.                                                       |
+    | 🏷️ `saleProductName`     | string | Optional  | N/A                                                | 사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다.                                                                                                       |
+    | 📄 `pageSize`           | number | Optional  | N/A                                                | 한 페이지에 표시할 상품의 최대 개수를 지정합니다.                                                                                                        |
+    | 🔢 `pageNumber`         | number | Optional  | N/A                    | 조회할 결과의 페이지 번호를 지정합니다.                                                                                                              |
+    | 🧮 `totalRowCount`      | number | Optional  | N/A                    | 검색 조건에 해당하는 전체 상품의 개수입니다.                                                                                                            |
+    | 📖 `totalPageCount`     | number | Optional  | N/A                    | 전체 상품을 `pageSize`에 따라 나눈 총 페이지 수입니다.                                                                                                     |
+
 *   🧠 **Handler Logic**:
-    1.  Logs entry, parameters, results, and errors using the central logger.
-    2.  Receives `saleProdCd` as input.
-    3.  Calls `packageService.getSchedules(saleProdCd)` to fetch schedule data for the product.
-    4.  Calls `packageService.getDetailCommonCodeByQuery(saleProdCd)` to fetch related common codes. (Assuming `saleProdCd` can be used as a query for relevant common codes, or this might involve a more specific query construction based on the product).
-    5.  Combines the schedule information and common code data into a single response object.
-    6.  Formats the combined data into the MCP content structure (type `text`, JSON stringified).
-    7.  Returns the formatted content or an error object if an exception occurs during any step.
+    1.  Logs entry, received input arguments, results, and errors using the central logger.
+    2.  Receives an `inputArguments` object containing parameters like `saleProductCode`, `reservationCode`, `startDate`, `endDate`, `productAttributeCode`, `productAreaCode`, `saleProductName`, and pagination details.
+    3.  Calls `packageService.retrieveSaleProductInformation(params)` with all received parameters to fetch product data.
+    4.  The service response (`saleProductList`) is then cleaned of HTML tags.
+    5.  The handler constructs a `responseData` object that includes all the input parameters along with the `saleProductList` and a `retrievedAt` timestamp.
+    6.  Formats this `responseData` into the MCP content structure (type `text`, JSON stringified).
+    7.  Returns the formatted content or an error object if an exception occurs.
+
 *   ✅ **Output (Success Example)**:
+    This example shows a successful retrieval. The output includes the input parameters that were used for the search, along with the list of products found.
     ```json
     {
       "content": [{
         "type": "text",
-        "text": "{\n  \"saleProdCd\": \"PROD12345\",\n  \"productName\": \"Super Summer Sale Package\",\n  \"schedules\": [\n    { \"id\": \"scheduleEvent1\", \"time\": \"2024-08-01T10:00:00Z\", \"event\": \"Sale Kick-off\" },\n    { \"id\": \"scheduleEvent2\", \"time\": \"2024-08-15T17:00:00Z\", \"event\": \"Mid-Sale Promotion\" }\n  ],\n  \"commonCodes\": {\n    \"PROD_ATTR_CD\": [\"ONLINE_ONLY\", \"LIMITED_STOCK\"],\n    \"REGION_CD\": [\"US_WEST\", \"US_EAST\"]\n  },\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+        "text": "{\n  \"saleProductCode\": \"PROD789\",\n  \"reservationCode\": null,\n  \"startDate\": 20240101,\n  \"endDate\": 20241231,\n  \"productAttributeCode\": \"P\",\n  \"productAreaCode\": \"AA\",\n  \"saleProductName\": \"Bangkok Package\",\n  \"pageSize\": 10,\n  \"pageNumber\": 1,\n  \"totalRowCount\": null,\n  \"totalPageCount\": null,\n  \"saleProductList\": [\n    {\n      \"productName\": \"Amazing Bangkok Tour\",\n      \"details\": \"Explore the vibrant city of Bangkok with our exclusive package.\"\n    }\n  ],\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
       }]
     }
     ```
