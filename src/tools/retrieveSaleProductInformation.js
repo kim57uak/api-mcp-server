@@ -61,16 +61,22 @@ export const retrieveSaleProductInformationTool = {
       .describe(
         "상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."
       ), // 필수값
-    productAttributeCode: ProductAttributeCodeEnum.optional().describe(
-      "상품 속성 코드입니다. 허용 값: 'P' (패키지), 'W' (웨딩), 'B' (액티비티). 이 코드 중 하나를 제공해야 합니다."
-    ), // 선택값
-    productAreaCode: ProductAreaCodeEnum.optional().describe(
-      "상품 지역 코드입니다. 허용 값: 'AA' (방콕, 동남아), 'C1' (중국), 'HH' (미주), 'J0' (일본). 이 코드 중 하나를 제공해야 합니다."
-    ), // 필수값
+    productAttributeCode: z
+      .string()
+      .optional()
+      .describe("영문 1자리 상품속성코드입니다."), // 선택값
+    productAreaCode: z
+      .string()
+      .optional()
+      .describe("영문과 숫자가 조합된 2자리 지역코드를 입력해야합니다."), // 필수값
     saleProductName: z
       .string()
       .optional()
       .describe("사용자 질의에서 상품명을 의미하는 텍스트 키워드입니다."), // 선택값
+    brandCode: z
+      .string()
+      .optional()
+      .describe("사용자 질의에서 브랜드 코드를 의미하는 텍스트 키워드입니다."), // 선택값
     pageSize: z
       .number()
       .optional()
