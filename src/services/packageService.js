@@ -338,6 +338,40 @@ export const packageService = {
       throw error;
     }
   },
+  getPackageProductRulesAndTravelAlerts: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductRulesAndTravelAlerts with saleProductCode: ${saleProductCode}`
+    );
+    try {
+      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgRefnMtr/v1.00`;
+      const requestBody = {
+        saleProductCode: saleProductCode,
+        header: {
+          langCode: defaultApiParams.commonCodeLang,
+        },
+      };
+      logger.info(
+        `Sending POST request to ${url} with body: ${JSON.stringify(
+          requestBody
+        )}`
+      );
+      const res = await axios.post(url, requestBody);
+      logger.info(
+        `getPackageProductRulesAndTravelAlerts completed successfully with result: ${JSON.stringify(
+          res.data
+        )}`
+      );
+      return res.data;
+    } catch (error) {
+      logger.error(
+        `Error in getPackageProductRulesAndTravelAlerts: ${error.message}`,
+        {
+          error: error.stack,
+        }
+      );
+      throw error;
+    }
+  },
   retrieveAreaCode: async () => {
     logger.info(`Executing retrieveAreaCode`);
     try {
