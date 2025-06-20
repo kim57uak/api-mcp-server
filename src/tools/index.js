@@ -4,6 +4,7 @@ import { getBasicCommonCodeByQueryTool } from "./getBasicCommonCodeByQuery.js";
 import { retrieveSaleProductInformationTool } from "./retrieveSaleProductInformation.js";
 import { retrieveAreaCodeTool } from "./retrieveAreaCode.js";
 import { getPackageProductInfoTool } from "./getPackageProductInfo.js";
+import { getPackageProductOptionalTourInfomationTool } from "./getPackageProductOptionalTourInfomation.js";
 
 export const tools = [
   {
@@ -77,5 +78,9 @@ export const tools = [
   {
     ...getPackageProductInfoTool,
     description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 상세 정보를 조회합니다. 이 정보에는 상품의 기본 정보, 가격, 일정 등이 포함될 수 있습니다.",
+  },
+  {
+    ...getPackageProductOptionalTourInfomationTool,
+    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 선택 관광 상세 정보를 조회합니다. 이 정보에는 선택 관광의 이름, 가격, 상세 설명 등이 포함될 수 있습니다.",
   },
 ];
