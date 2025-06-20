@@ -273,6 +273,37 @@ export const packageService = {
       throw error;
     }
   },
+  getPackageProductInfo: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductInfo with saleProductCode: ${saleProductCode}`
+    );
+    try {
+      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdInfo2/v1.00`;
+      const requestBody = {
+        saleProductCode: saleProductCode,
+        header: {
+          langCode: defaultApiParams.commonCodeLang,
+        },
+      };
+      logger.info(
+        `Sending POST request to ${url} with body: ${JSON.stringify(
+          requestBody
+        )}`
+      );
+      const res = await axios.post(url, requestBody);
+      logger.info(
+        `getPackageProductInfo completed successfully with result: ${JSON.stringify(
+          res.data
+        )}`
+      );
+      return res.data;
+    } catch (error) {
+      logger.error(`Error in getPackageProductInfo: ${error.message}`, {
+        error: error.stack,
+      });
+      throw error;
+    }
+  },
   retrieveAreaCode: async () => {
     logger.info(`Executing retrieveAreaCode`);
     try {
