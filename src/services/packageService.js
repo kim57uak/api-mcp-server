@@ -163,12 +163,12 @@ export const packageService = {
       };
 
       // 진단용 로그 추가
-      console.log('requestBody:', JSON.stringify(requestBody, null, 2));
+      console.log("requestBody:", JSON.stringify(requestBody, null, 2));
       logger.info(`requestBody: ${JSON.stringify(requestBody)}`);
 
       const axiosConfig = {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       };
 
@@ -270,6 +270,106 @@ export const packageService = {
       logger.error(`Error in getBasicCommonCodeByQuery: ${error.message}`, {
         error: error.stack,
       });
+      throw error;
+    }
+  },
+  getPackageProductInfo: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductInfo with saleProductCode: ${saleProductCode}`
+    );
+    try {
+      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdInfo2/v1.00`;
+      const requestBody = {
+        pkgCd: saleProductCode,
+        inpPathCd:"WPP",
+        header: {
+          langCode: defaultApiParams.commonCodeLang,
+        },
+      };
+      logger.info(
+        `Sending POST request to ${url} with body: ${JSON.stringify(
+          requestBody
+        )}`
+      );
+      const res = await axios.post(url, requestBody);
+      logger.info(
+        `getPackageProductInfo completed successfully with result: ${JSON.stringify(
+          res.data
+        )}`
+      );
+      return res.data;
+    } catch (error) {
+      logger.error(`Error in getPackageProductInfo: ${error.message}`, {
+        error: error.stack,
+      });
+      throw error;
+    }
+  },
+  getPackageProductOptionalTourInfomation: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductOptionalTourInfomation with saleProductCode: ${saleProductCode}`
+    );
+    try {
+      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdChcStsngInfo/v1.00`;
+      const requestBody = {
+        pkgCd: saleProductCode,
+        header: {
+          langCode: defaultApiParams.commonCodeLang,
+        },
+      };
+      logger.info(
+        `Sending POST request to ${url} with body: ${JSON.stringify(
+          requestBody
+        )}`
+      );
+      const res = await axios.post(url, requestBody);
+      logger.info(
+        `getPackageProductOptionalTourInfomation completed successfully with result: ${JSON.stringify(
+          res.data
+        )}`
+      );
+      return res.data;
+    } catch (error) {
+      logger.error(
+        `Error in getPackageProductOptionalTourInfomation: ${error.message}`,
+        {
+          error: error.stack,
+        }
+      );
+      throw error;
+    }
+  },
+  getPackageProductRulesAndTravelAlerts: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductRulesAndTravelAlerts with saleProductCode: ${saleProductCode}`
+    );
+    try {
+      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgRefnMtr/v1.00`;
+      const requestBody = {
+        pkgCd: saleProductCode,
+        header: {
+          langCode: defaultApiParams.commonCodeLang,
+        },
+      };
+      logger.info(
+        `Sending POST request to ${url} with body: ${JSON.stringify(
+          requestBody
+        )}`
+      );
+      const res = await axios.post(url, requestBody);
+      logger.info(
+        `getPackageProductRulesAndTravelAlerts completed successfully with result: ${JSON.stringify(
+          res.data
+        )}`
+      );
+      return res.data;
+    } catch (error) {
+      logger.error(
+        `Error in getPackageProductRulesAndTravelAlerts: ${error.message}`,
+        {
+          error: error.stack,
+        }
+      );
       throw error;
     }
   },
