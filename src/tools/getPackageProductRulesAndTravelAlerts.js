@@ -4,6 +4,7 @@ import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
 import { cleanObject } from "../utils/objectUtils.js";
+import { createJsonResponse } from "../utils/responseUtils.js";
 
 export const getPackageProductRulesAndTravelAlertsTool = {
   name: "getPackageProductRulesAndTravelAlerts",
@@ -29,25 +30,7 @@ export const getPackageProductRulesAndTravelAlertsTool = {
         `getPackageProductRulesAndTravelAlerts tool execution completed successfully.`
       ); // result 내 모든 문자열에서 html 태그 제거
       const cleanedResult = cleanObject(result);
-      logger.info(
-        `${functionName} completed successfully with result: ${JSON.stringify(
-          cleanedResult
-        )}`
-      );
-      const response = {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(cleanedResult, null, 2),
-          },
-        ],
-      };
-      logger.info(
-        `${functionName} completed successfully with result: ${JSON.stringify(
-          response
-        )}`
-      );
-      return response;
+      return createJsonResponse(functionName, cleanedResult, logger);
     } catch (error) {
       logger.error(
         `Error executing getPackageProductRulesAndTravelAlerts tool: ${error.message}`,

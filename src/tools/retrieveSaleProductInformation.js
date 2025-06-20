@@ -9,6 +9,7 @@ import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
 import { cleanObject } from "../utils/objectUtils.js";
+import { createJsonResponse } from "../utils/responseUtils.js";
 
 export const retrieveSaleProductInformationTool = {
   name: "retrieveSaleProductInformation",
@@ -149,20 +150,7 @@ export const retrieveSaleProductInformationTool = {
         saleProductList: cleanSaleProductList,
         retrievedAt: new Date().toISOString(),
       };
-      const response = {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(responseData, null, 2),
-          },
-        ],
-      };
-      logger.info(
-        `${functionName} completed successfully with result: ${JSON.stringify(
-          response
-        )}`
-      );
-      return response;
+      return createJsonResponse(functionName, responseData, logger);
     } catch (error) {
       logger.error(`Error in ${functionName}: ${error.message}`, {
         error: error.stack,
