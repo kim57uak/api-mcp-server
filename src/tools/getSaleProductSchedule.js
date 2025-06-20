@@ -3,6 +3,7 @@ import { z } from "zod";
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
+import { cleanObject } from "../utils/objectUtils.js";
 
 export const getSaleProductScheduleTool = {
   name: "getSaleProductSchedule",
@@ -24,24 +25,6 @@ export const getSaleProductScheduleTool = {
       );
       const schedules = await packageService.getSchedules(saleProdCd);
       // schedules 내 모든 문자열에서 html 태그 제거
-      function cleanObject(obj) {
-        if (typeof obj === "string") return stripHtml(obj);
-        if (Array.isArray(obj))
-          return obj.map(cleanObject).filter((v) => v !== undefined);
-        if (obj && typeof obj === "object") {
-          const newObj = {};
-          for (const key in obj) {
-            const cleaned = cleanObject(obj[key]);
-            if (cleaned !== null && cleaned !== undefined) {
-              newObj[key] = cleaned;
-            }
-          }
-          // 모든 값이 undefined로 제외된 경우 빈 객체 반환
-          return Object.keys(newObj).length > 0 ? newObj : undefined;
-        }
-        if (obj === null) return undefined;
-        return obj;
-      }
       const cleanedSchedules = cleanObject(schedules);
       const responseData = {
         saleProdCd: saleProdCd,

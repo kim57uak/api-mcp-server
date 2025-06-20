@@ -8,6 +8,7 @@ const ProductAreaCodeEnum = z.enum(["AA", "C1", "HH", "J0"]);
 import { packageService } from "../services/packageService.js";
 import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
+import { cleanObject } from "../utils/objectUtils.js";
 
 export const retrieveSaleProductInformationTool = {
   name: "retrieveSaleProductInformation",
@@ -141,24 +142,6 @@ export const retrieveSaleProductInformationTool = {
         await packageService.retrieveSaleProductInformation(params);
 
       // saleProductList 내 모든 문자열에서 html 태그 제거
-      function cleanObject(obj) {
-        if (typeof obj === "string") return stripHtml(obj);
-        if (Array.isArray(obj))
-          return obj.map(cleanObject).filter((v) => v !== undefined);
-        if (obj && typeof obj === "object") {
-          const newObj = {};
-          for (const key in obj) {
-            const cleaned = cleanObject(obj[key]);
-            if (cleaned !== null && cleaned !== undefined) {
-              newObj[key] = cleaned;
-            }
-          }
-          // 모든 값이 undefined로 제외된 경우 빈 객체 반환
-          return Object.keys(newObj).length > 0 ? newObj : undefined;
-        }
-        if (obj === null) return undefined;
-        return obj;
-      }
       const cleanSaleProductList = cleanObject(saleProductList);
       const responseData = {
         // 기존 saleProdCd 외에 모든 파라미터 포함
