@@ -10,7 +10,7 @@ import {
 } from "../config/serviceConfig.js";
 import { callApi } from '../utils/apiUtils.js';
 import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
-import { callOlsComPkgProdStrtrService } from './helpers/commercialPackageProductStructureHelpers.js';
+import { callPackageProductSpecificCodeService } from './helpers/packageProductSpecificCodeHelpers.js';
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
@@ -186,14 +186,14 @@ export const packageService = {
    * @async
    * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
    */
-  retrieveComPkgProdStrtrProductClassification: async () => {
-    logger.info("Executing retrieveComPkgProdStrtrProductClassification");
+  retrievePackageProductClassificationCode: async () => {
+    logger.info("Executing retrievePackageProductClassificationCode");
     try {
-      const result = await callOlsComPkgProdStrtrService("01");
-      logger.info("retrieveComPkgProdStrtrProductClassification completed successfully.");
+      const result = await callPackageProductSpecificCodeService("01");
+      logger.info("retrievePackageProductClassificationCode completed successfully.");
       return result;
     } catch (error) {
-      logger.error(`Error in retrieveComPkgProdStrtrProductClassification: ${error.message}`);
+      logger.error(`Error in retrievePackageProductClassificationCode: ${error.message}`);
       throw error; // 에러를 상위로 전파하여 tool 레벨에서 처리하도록 함
     }
   },
@@ -204,14 +204,14 @@ export const packageService = {
    * @async
    * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
    */
-  retrieveComPkgProdStrtrPromotion: async () => {
-    logger.info("Executing retrieveComPkgProdStrtrPromotion");
+  retrievePackageProductPromotionCode: async () => {
+    logger.info("Executing retrievePackageProductPromotionCode");
     try {
-      const result = await callOlsComPkgProdStrtrService("02");
-      logger.info("retrieveComPkgProdStrtrPromotion completed successfully.");
+      const result = await callPackageProductSpecificCodeService("02");
+      logger.info("retrievePackageProductPromotionCode completed successfully.");
       return result;
     } catch (error) {
-      logger.error(`Error in retrieveComPkgProdStrtrPromotion: ${error.message}`);
+      logger.error(`Error in retrievePackageProductPromotionCode: ${error.message}`);
       throw error;
     }
   },
@@ -222,14 +222,14 @@ export const packageService = {
    * @async
    * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
    */
-  retrieveComPkgProdStrtrTheme: async () => {
-    logger.info("Executing retrieveComPkgProdStrtrTheme");
+  retrievePackageProductThemeCode: async () => {
+    logger.info("Executing retrievePackageProductThemeCode");
     try {
-      const result = await callOlsComPkgProdStrtrService("03");
-      logger.info("retrieveComPkgProdStrtrTheme completed successfully.");
+      const result = await callPackageProductSpecificCodeService("03");
+      logger.info("retrievePackageProductThemeCode completed successfully.");
       return result;
     } catch (error) {
-      logger.error(`Error in retrieveComPkgProdStrtrTheme: ${error.message}`);
+      logger.error(`Error in retrievePackageProductThemeCode: ${error.message}`);
       throw error;
     }
   },
