@@ -64,7 +64,7 @@ export function buildRetrieveSaleProductRequestBody({
     tempAirNm: "",
     tempDpurcNm: "",
     tempCard: "",
-    productAreaExceptCode: "",
+    productAreaExceptCode: "G",
     stateCodeInformation: "",
     cityCodeInformation: "",
     specificAgentCode: "",
