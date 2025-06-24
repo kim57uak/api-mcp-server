@@ -6,6 +6,9 @@ import { retrieveAreaCodeTool } from "./retrieveAreaCode.js";
 import { getPackageProductInfoTool } from "./getPackageProductInfo.js";
 import { getPackageProductOptionalTourInfomationTool } from "./getPackageProductOptionalTourInfomation.js";
 import { getPackageProductRulesAndTravelAlertsTool } from "./getPackageProductRulesAndTravelAlerts.js";
+import { retrievePackageProductClassificationCodeTool } from "./retrievePackageProductClassificationCodeTool.js";
+import { retrievePackageProductPromotionCodeTool } from "./retrievePackageProductPromotionCodeTool.js";
+import { retrievePackageProductThemeCodeTool } from "./retrievePackageProductThemeCodeTool.js";
 
 export const tools = [
   {
@@ -78,14 +81,29 @@ export const tools = [
   },
   {
     ...getPackageProductInfoTool,
-    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 상세 정보를 조회합니다. 이 정보에는 상품의 기본 정보, 가격, 일정 등이 포함될 수 있습니다.",
+    description:
+      "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 상세 정보를 조회합니다. 이 정보에는 상품의 기본 정보, 가격, 일정 등이 포함될 수 있습니다.",
   },
   {
     ...getPackageProductOptionalTourInfomationTool,
-    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 선택 관광 상세 정보를 조회합니다. 이 정보에는 선택 관광의 이름, 가격, 상세 설명 등이 포함될 수 있습니다.",
+    description:
+      "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 선택 관광 상세 정보를 조회합니다. 이 정보에는 선택 관광의 이름, 가격, 상세 설명 등이 포함될 수 있습니다.",
   },
   {
     ...getPackageProductRulesAndTravelAlertsTool,
-    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 약관, 유의사항 및 여행경보 단계와 같은 중요 정보를 조회합니다.",
+    description:
+      "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 약관, 유의사항 및 여행경보 단계와 같은 중요 정보를 조회합니다.",
+  },
+  {
+    ...retrievePackageProductClassificationCodeTool,
+    description: `패키지 상품의 전체 상품구분 코드를 조회합니다.`,
+  },
+  {
+    ...retrievePackageProductPromotionCodeTool,
+    description: `패키지 상품의 프로모션 코드를 조회합니다.`,
+  },
+  {
+    ...retrievePackageProductThemeCodeTool,
+    description: `패키지 상품의 모든 테마 코드를 조회합니다.`,
   },
 ];

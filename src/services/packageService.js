@@ -10,6 +10,7 @@ import {
 } from "../config/serviceConfig.js";
 import { callApi } from '../utils/apiUtils.js';
 import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
+import { callPackageProductSpecificCodeService } from './helpers/packageProductSpecificCodeHelpers.js';
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
@@ -177,5 +178,59 @@ export const packageService = {
       },
     };
     return await callApi('retrieveAreaCode', 'post', url, requestBody);
+  },
+
+  /**
+   * OLS에서 상품 구분 코드 리스트를 조회합니다.
+   * 내부적으로 /pkg/ols/common/cbc/compkgprodstrtr/getComPkgProdStrtrCboList/v1.00 OLS API에 파라미터 '01'을 전달하여 호출합니다.
+   * @async
+   * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
+   */
+  retrievePackageProductClassificationCode: async () => {
+    logger.info("Executing retrievePackageProductClassificationCode");
+    try {
+      const result = await callPackageProductSpecificCodeService("01");
+      logger.info("retrievePackageProductClassificationCode completed successfully.");
+      return result;
+    } catch (error) {
+      logger.error(`Error in retrievePackageProductClassificationCode: ${error.message}`);
+      throw error; // 에러를 상위로 전파하여 tool 레벨에서 처리하도록 함
+    }
+  },
+
+  /**
+   * OLS에서 프로모션 코드 리스트를 조회합니다.
+   * 내부적으로 /pkg/ols/common/cbc/compkgprodstrtr/getComPkgProdStrtrCboList/v1.00 OLS API에 파라미터 '02'를 전달하여 호출합니다.
+   * @async
+   * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
+   */
+  retrievePackageProductPromotionCode: async () => {
+    logger.info("Executing retrievePackageProductPromotionCode");
+    try {
+      const result = await callPackageProductSpecificCodeService("02");
+      logger.info("retrievePackageProductPromotionCode completed successfully.");
+      return result;
+    } catch (error) {
+      logger.error(`Error in retrievePackageProductPromotionCode: ${error.message}`);
+      throw error;
+    }
+  },
+
+  /**
+   * OLS에서 테마 코드 리스트를 조회합니다.
+   * 내부적으로 /pkg/ols/common/cbc/compkgprodstrtr/getComPkgProdStrtrCboList/v1.00 OLS API에 파라미터 '03'을 전달하여 호출합니다.
+   * @async
+   * @returns {Promise<any>} API 응답 데이터 또는 오류 발생 시 해당 오류를 throw.
+   */
+  retrievePackageProductThemeCode: async () => {
+    logger.info("Executing retrievePackageProductThemeCode");
+    try {
+      const result = await callPackageProductSpecificCodeService("03");
+      logger.info("retrievePackageProductThemeCode completed successfully.");
+      return result;
+    } catch (error) {
+      logger.error(`Error in retrievePackageProductThemeCode: ${error.message}`);
+      throw error;
+    }
   },
 };
