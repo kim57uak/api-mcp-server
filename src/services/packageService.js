@@ -6,55 +6,24 @@ import axios from "axios";
 import logger from "../utils/logger.cjs";
 import {
   apiUrls,
-  codeMappings,
   defaultApiParams,
 } from "../config/serviceConfig.js";
-
-// Modified findBestCodeByQuery to accept codeMap as a parameter
-function findBestCodeByQuery(query, codeMap) {
-  const lowerQuery = query.toLowerCase();
-  logger.info(`findBestCodeByQuery : lowerQuery : ${lowerQuery}`);
-  for (const { code, keywords } of codeMap) {
-    // Use the passed codeMap
-    logger.info(
-      `findBestCodeByQuery : code  = ${code} ,keywords = ${keywords},lowerQuery = ${lowerQuery}`
-    );
-    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-      return code;
-    }
-  }
-  return null;
-}
+import { callApi } from '../utils/apiUtils.js';
+import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
     logger.info(
       `Executing getSchedules with params: ${JSON.stringify({ saleProdCd })}`
     );
-    try {
-      // 실제 API 호출
-      //const url = `${apiUrls.packageApiBase}/api/v2/platform/pkg/sale-products/${saleProdCd}/schedules`;
-      //const res = await axios.get(url);
-      const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdItnrInfo/v1.00`;
-      const res = await axios.post(url, {
-        pkgCd: saleProdCd,
-        header: {
-          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
-        },
-      });
-      logger.info(
-        `getSchedules completed successfully with result: ${JSON.stringify(
-          res.data
-        )}`
-      );
-      return res.data;
-    } catch (error) {
-      logger.error(`Error in getSchedules: ${error.message}`, {
-        error: error.stack,
-      });
-      // console.error("[Service] GET API 호출 실패:", err.message); // Original console log
-      throw error;
-    }
+    const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdItnrInfo/v1.00`;
+    const requestBody = {
+      pkgCd: saleProdCd,
+      header: {
+        langCode: defaultApiParams.commonCodeLang, // Use configured lang code
+      },
+    };
+    return await callApi('getSchedules', 'post', url, requestBody);
   },
 
   retrieveSaleProductInformation: async ({
@@ -91,103 +60,14 @@ export const packageService = {
       )}`
     );
 
-    try {
-      const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSaleProdBrwsTab/v1.00`;
-
-      // 요청 본문을 동적으로 생성
-      const requestBody = {
-        productCodeDivision: "P", // prodCdDv
-        productCode: saleProductCode || "", // prodCd
-        productSeparator: "", // prodSprtrCd
-        reservationCode: reservationCode || "", // resCd
-        productAreaCode: productAreaCode || "AA", // prodAreaCd
-        teamDivisionCode: "", // teamDvCd
-        arrangementEmployeeNumber: "", // arngRpprEmpn
-        merchandiserEmployeeNumber: "", // mrchRpprEmpn
-        airEmployeeNumber: "", // airRpprEmpn
-        directPurchaseHotelEmployeeNumber: "", // dpurcRpprEmpn
-        departureArrivalDivisionCode: "S", // depArrDvCd
-        startDate: startDate, // startDate
-        endDate: endDate, // endDate
-        productBrowseTypeCode: "", // prodBrwsTypeCd
-        productTypeCode: "", // prodTypeCd
-        transitTypeCode: "", // trnpTypeCd
-        allYn: "A", // allYn
-        sundayYn: "", // sndyYn
-        mondayYn: "", // monYn
-        tuesdayYn: "", // tueYn
-        wednesdayYn: "", // wedYn
-        thursdayYn: "", // thuYn
-        fridayYn: "", // friYn
-        saturdayYn: "", // satYn
-        productBrandCode: brandCd || "", // prodBrndCd
-        promotionCode: "", // promCd
-        productDivisionCode: "", // prodDvCd
-        themeCode: "", // thmCd
-        inventoryPatternId: "", // invPtnId
-        departureAirCode: "", // depAirCd
-        departureFlightCode: "", // depFlgtCd
-        arrivalAirCode: "", // arrAirCd
-        arrivalFlightCode: "", // arrFlgtCd
-        departureCityCode: "", // depCityCd
-        teamDepartmentCode: "", // teamDeptCd
-        saleProductName: saleProductName || "", // saleProdNm
-        hotelCode: "", // htlCd
-        landCode: "", // landCd
-        adultAmount: "", // adtAmt
-        basisFeeRate: null, // bassFeeRate
-        officialCertificationFeeRate: null, // ocrtFeeRate
-        affiliatedConcernFeeRate: null, // afcnFeeRate
-        depositKindCode: "", // depoKndCd
-        productAttributeCode: productAttributeCode || "", // prodAttrCd
-        tempArngNm: "", // not mapped (custom)
-        tempMrchNm: "", // not mapped (custom)
-        tempAirNm: "", // not mapped (custom)
-        tempDpurcNm: "", // not mapped (custom)
-        tempCard: "", // not mapped (custom)
-        productAreaExceptCode: "", // prodAreaEtcCd
-        stateCodeInformation: "", // scodInfo
-        cityCodeInformation: "", // cityCdInfo
-        specificAgentCode: "", // agtCd
-        supplierHeadOfficeDispatchExistenceOrNonexistence: "N", // splyStaffAuth
-
-        pageVo: {
-          pageSize: pageSize || 100,
-          pageNumber: pageNumber || 1,
-          totalRowCount: totalRowCount || 0,
-          totalPageCount: totalPageCount || 0,
-        },
-        header: {
-          langCode: defaultApiParams.commonCodeLang,
-        },
-      };
-
-      // 진단용 로그 추가
-      console.log('requestBody:', JSON.stringify(requestBody, null, 2));
-      logger.info(`requestBody: ${JSON.stringify(requestBody)}`);
-
-      const axiosConfig = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      const res = await axios.post(url, requestBody, axiosConfig);
-      logger.info(
-        `retrieveSaleProductInformation completed successfully with result: ${JSON.stringify(
-          res.data
-        )}`
-      );
-      return res.data;
-    } catch (error) {
-      logger.error(
-        `Error in retrieveSaleProductInformation: ${error.message}`,
-        {
-          error: error.stack,
-        }
-      );
-      throw error;
-    }
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSaleProdBrwsTab/v1.00`;
+    const requestBody = buildRetrieveSaleProductRequestBody(params);
+    const axiosConfig = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    return await callApi('retrieveSaleProductInformation', 'post', url, requestBody, axiosConfig);
   },
 
   updateSchedule: async (saleProdCd, name) => {
@@ -197,23 +77,9 @@ export const packageService = {
         name,
       })}`
     );
-    try {
-      // 실제 API 호출
-      const url = `${apiUrls.packageApiBase}/api/v2/platform/pkg/sale-products/schedules/update`;
-      const res = await axios.post(url, { saleProdCd, name });
-      logger.info(
-        `updateSchedule completed successfully with result: ${JSON.stringify(
-          res.data
-        )}`
-      );
-      return res.data;
-    } catch (error) {
-      logger.error(`Error in updateSchedule: ${error.message}`, {
-        error: error.stack,
-      });
-      // console.error("[Service] POST API 호출 실패:", err.message); // Original console log
-      throw error;
-    }
+    const url = `${apiUrls.packageApiBase}/api/v2/platform/pkg/sale-products/schedules/update`;
+    const requestBody = { saleProdCd, name };
+    return await callApi('updateSchedule', 'post', url, requestBody);
   },
   getDetailCommonCodeByQuery: async (query) => {
     logger.info(
@@ -221,28 +87,22 @@ export const packageService = {
         query,
       })}`
     );
-    try {
-      const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
-      const res = await axios.post(url, {
-        comBscCd: query,
-        comBscCdNm: query,
-        header: {
-          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
-        },
-      });
-      const result = { query, data: res.data };
-      logger.info(
-        `getDetailCommonCodeByQuery completed successfully with result: ${JSON.stringify(
-          result
-        )}`
-      );
-      return result;
-    } catch (error) {
-      logger.error(`Error in getDetailCommonCodeByQuery: ${error.message}`, {
-        error: error.stack,
-      });
-      throw error;
-    }
+    const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComDtlCdList/v1.00`;
+    const requestBody = {
+      comBscCd: query,
+      comBscCdNm: query,
+      header: {
+        langCode: defaultApiParams.commonCodeLang, // Use configured lang code
+      },
+    };
+    const responseData = await callApi('getDetailCommonCodeByQuery', 'post', url, requestBody);
+    const result = { query, data: responseData };
+    logger.info(
+      `getDetailCommonCodeByQuery completed successfully with result: ${JSON.stringify(
+        result
+      )}`
+    );
+    return result;
   },
   getBasicCommonCodeByQuery: async (query) => {
     logger.info(
@@ -250,50 +110,72 @@ export const packageService = {
         query,
       })}`
     );
-    try {
-      const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComBscCdList/v1.00`;
-      const res = await axios.post(url, {
-        comBscCd: query,
-        comBscCdNm: query,
-        header: {
-          langCode: defaultApiParams.commonCodeLang, // Use configured lang code
-        },
-      });
-      const result = { query, data: res.data };
-      logger.info(
-        `getBasicCommonCodeByQuery completed successfully with result: ${JSON.stringify(
-          result
-        )}`
-      );
-      return result;
-    } catch (error) {
-      logger.error(`Error in getBasicCommonCodeByQuery: ${error.message}`, {
-        error: error.stack,
-      });
-      throw error;
-    }
+    const url = `${apiUrls.commonOlsBase}/common/ols/codemgt/cbc/commoncodemgt/getComBscCdList/v1.00`;
+    const requestBody = {
+      comBscCd: query,
+      comBscCdNm: query,
+      header: {
+        langCode: defaultApiParams.commonCodeLang, // Use configured lang code
+      },
+    };
+    const responseData = await callApi('getBasicCommonCodeByQuery', 'post', url, requestBody);
+    const result = { query, data: responseData };
+    logger.info(
+      `getBasicCommonCodeByQuery completed successfully with result: ${JSON.stringify(
+        result
+      )}`
+    );
+    return result;
+  },
+  getPackageProductInfo: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductInfo with saleProductCode: ${saleProductCode}`
+    );
+    const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdInfo2/v1.00`;
+    const requestBody = {
+      pkgCd: saleProductCode,
+      inpPathCd:"WPP",
+      header: {
+        langCode: defaultApiParams.commonCodeLang,
+      },
+    };
+    return await callApi('getPackageProductInfo', 'post', url, requestBody);
+  },
+  getPackageProductOptionalTourInfomation: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductOptionalTourInfomation with saleProductCode: ${saleProductCode}`
+    );
+    const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgProdChcStsngInfo/v1.00`;
+    const requestBody = {
+      pkgCd: saleProductCode,
+      header: {
+        langCode: defaultApiParams.commonCodeLang,
+      },
+    };
+    return await callApi('getPackageProductOptionalTourInfomation', 'post', url, requestBody);
+  },
+  getPackageProductRulesAndTravelAlerts: async ({ saleProductCode }) => {
+    logger.info(
+      `Executing getPackageProductRulesAndTravelAlerts with saleProductCode: ${saleProductCode}`
+    );
+    const url = `${apiUrls.packageApiBase}/pkg/api/common/pkgcomprod/getPkgRefnMtr/v1.00`;
+    const requestBody = {
+      pkgCd: saleProductCode,
+      header: {
+        langCode: defaultApiParams.commonCodeLang,
+      },
+    };
+    return await callApi('getPackageProductRulesAndTravelAlerts', 'post', url, requestBody);
   },
   retrieveAreaCode: async () => {
     logger.info(`Executing retrieveAreaCode`);
-    try {
-      const url = `${apiUrls.olsQaBase}/pkg/api/gnis/common/cbc/compkgarea/getComPkgAreaCboListForProduct/v1.00`;
-      const res = await axios.post(url, {
-        langCd: "ko-KR",
-        header: {
-          langCode: defaultApiParams.commonCodeLang,
-        },
-      });
-      logger.info(
-        `retrieveAreaCode completed successfully with result: ${JSON.stringify(
-          res.data
-        )}`
-      );
-      return res.data;
-    } catch (error) {
-      logger.error(`Error in retrieveAreaCode: ${error.message}`, {
-        error: error.stack,
-      });
-      throw error;
-    }
+    const url = `${apiUrls.olsQaBase}/pkg/api/gnis/common/cbc/compkgarea/getComPkgAreaCboListForProduct/v1.00`;
+    const requestBody = {
+      langCd: "ko-KR", // This seems specific, keeping it directly.
+      header: {
+        langCode: defaultApiParams.commonCodeLang,
+      },
+    };
+    return await callApi('retrieveAreaCode', 'post', url, requestBody);
   },
 };

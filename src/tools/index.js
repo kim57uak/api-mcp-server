@@ -3,6 +3,9 @@ import { getDetailCommonCodeByQueryTool } from "./getDetailCommonCodeByQuery.js"
 import { getBasicCommonCodeByQueryTool } from "./getBasicCommonCodeByQuery.js";
 import { retrieveSaleProductInformationTool } from "./retrieveSaleProductInformation.js";
 import { retrieveAreaCodeTool } from "./retrieveAreaCode.js";
+import { getPackageProductInfoTool } from "./getPackageProductInfo.js";
+import { getPackageProductOptionalTourInfomationTool } from "./getPackageProductOptionalTourInfomation.js";
+import { getPackageProductRulesAndTravelAlertsTool } from "./getPackageProductRulesAndTravelAlerts.js";
 
 export const tools = [
   {
@@ -72,5 +75,17 @@ export const tools = [
     지역,국가,대륙에 대한 정보를 조회한다.
     예시 : 동남아 지역 찾아죠 => 이 함수를 실행해서 결과를 확인한후 동남아에 해당하는 코드를 선택한다.
     `,
+  },
+  {
+    ...getPackageProductInfoTool,
+    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 상세 정보를 조회합니다. 이 정보에는 상품의 기본 정보, 가격, 일정 등이 포함될 수 있습니다.",
+  },
+  {
+    ...getPackageProductOptionalTourInfomationTool,
+    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 선택 관광 상세 정보를 조회합니다. 이 정보에는 선택 관광의 이름, 가격, 상세 설명 등이 포함될 수 있습니다.",
+  },
+  {
+    ...getPackageProductRulesAndTravelAlertsTool,
+    description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 약관, 유의사항 및 여행경보 단계와 같은 중요 정보를 조회합니다.",
   },
 ];
