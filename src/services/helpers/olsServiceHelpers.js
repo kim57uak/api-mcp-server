@@ -2,46 +2,7 @@
 import logger from "../../utils/logger.cjs";
 import { apiUrls, defaultApiParams } from "../../config/serviceConfig.js";
 import { callApi } from '../../utils/apiUtils.js';
-
-/**
- * 객체나 배열을 재귀적으로 탐색하여 null 값을 제거합니다.
- * - 객체의 경우: 값이 null인 속성을 제거합니다.
- * - 배열의 경우: null인 요소를 제거하고, 각 요소에 대해 재귀적으로 함수를 적용합니다.
- * - null이 아닌 원시 값은 그대로 반환합니다.
- * @param {any} data - 처리할 데이터 (객체, 배열, 또는 다른 타입)
- * @returns {any} null 값이 제거된 데이터
- */
-function removeNullsRecursively(data) {
-  if (data === null || data === undefined) {
-    return undefined; // null이나 undefined는 제거 대상으로 undefined 반환
-  }
-
-  if (Array.isArray(data)) {
-    // 배열인 경우, 각 요소에 대해 재귀적으로 함수를 적용하고,
-    // 결과가 undefined가 아닌 요소들만 필터링하여 새 배열 생성
-    return data
-      .map(item => removeNullsRecursively(item))
-      .filter(item => item !== undefined);
-  }
-
-  if (typeof data === 'object') {
-    // 객체인 경우, 각 속성에 대해 재귀적으로 함수를 적용하고,
-    // 결과 값이 undefined가 아닌 속성들만 포함하는 새 객체 생성
-    const newData = {};
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        const value = removeNullsRecursively(data[key]);
-        if (value !== undefined) {
-          newData[key] = value;
-        }
-      }
-    }
-    return newData;
-  }
-
-  // 원시 값이나 기타 타입은 그대로 반환
-  return data;
-}
+import { cleanObject } from "../../utils/objectUtils.js";
 
 /**
  * OLS 서비스 (/pkg/ols/common/cbc/compkgprodstrtr/getComPkgProdStrtrCboList/v1.00)를 호출하는 공통 함수.
@@ -90,10 +51,10 @@ export const callOlsComPkgProdStrtrService = async (olsCd) => {
       `${serviceName} for olsCd '${olsCd}' completed successfully. Raw data received.`
     );
 
-    // API 응답에서 null 값 제거
-    const cleanedResponseData = removeNullsRecursively(rawResponseData);
+    // API 응답에서 null 값 및 HTML 태그 제거 (objectUtils.cleanObject 사용)
+    const cleanedResponseData = cleanObject(rawResponseData);
     logger.info(
-      `Data after null removal for olsCd '${olsCd}': ${JSON.stringify(cleanedResponseData)}`
+      `Data after cleaning (nulls, HTML) for olsCd '${olsCd}': ${JSON.stringify(cleanedResponseData)}`
     );
 
     return cleanedResponseData;
