@@ -6,6 +6,9 @@ import { retrieveAreaCodeTool } from "./retrieveAreaCode.js";
 import { getPackageProductInfoTool } from "./getPackageProductInfo.js";
 import { getPackageProductOptionalTourInfomationTool } from "./getPackageProductOptionalTourInfomation.js";
 import { getPackageProductRulesAndTravelAlertsTool } from "./getPackageProductRulesAndTravelAlerts.js";
+import { retrieveComPkgProdStrtrProductClassificationTool } from "./retrieveComPkgProdStrtrProductClassificationTool.js";
+import { retrieveComPkgProdStrtrPromotionTool } from "./retrieveComPkgProdStrtrPromotionTool.js";
+import { retrieveComPkgProdStrtrThemeTool } from "./retrieveComPkgProdStrtrThemeTool.js";
 
 export const tools = [
   {
@@ -88,4 +91,7 @@ export const tools = [
     ...getPackageProductRulesAndTravelAlertsTool,
     description: "판매상품코드(saleProductCode)를 사용하여 패키지 상품의 약관, 유의사항 및 여행경보 단계와 같은 중요 정보를 조회합니다.",
   },
+  retrieveComPkgProdStrtrProductClassificationTool,
+  retrieveComPkgProdStrtrPromotionTool,
+  retrieveComPkgProdStrtrThemeTool,
 ];
