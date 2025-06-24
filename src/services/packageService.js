@@ -10,7 +10,7 @@ import {
 } from "../config/serviceConfig.js";
 import { callApi } from '../utils/apiUtils.js';
 import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
-import { callOlsComPkgProdStrtrService } from './helpers/olsServiceHelpers.js';
+import { callOlsComPkgProdStrtrService } from './helpers/commercialPackageProductStructureHelpers.js';
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
