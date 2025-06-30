@@ -233,4 +233,247 @@ export const packageService = {
       throw error;
     }
   },
+
+  // --- API Group 3.1: 상품 기본 정보 및 관련 정보 조회 ---
+  /**
+   * 상품 기본 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveProductBasicInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveProductBasicInfomationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdBscInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 상품 항공 인벤토리 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveProductAirInventoryInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveProductAirInventoryInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdAivInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 상품 요금 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveProductFareInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveProductFareInfomationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdFareTpgInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 기본 정보 조회 (상품 탭)
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveProductTabBasicInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveProductTabBasicInfomationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveTpgBscInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 항공 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveAirLineInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveAirLineInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHgrsInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 호텔 현지 일정 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveHotelScheduleInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveHotelScheduleInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHtlSchdInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 샌딩 약관 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveSendingTermAndConditionsBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveSendingTermAndConditionsBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSndgStplInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 선택 관광 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveOptionalTourBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveOptionalTourBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveChssTabInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 경비 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveExpenseInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveExpenseInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveExpnTabInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 여정 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveInineraryInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveInineraryInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveItnrTabInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  /**
+   * 비고 정보 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveRemarksInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveRemarksInformationBySaleProductCode";
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveRmkTabInfo/v1.00`;
+    const requestBody = {
+      saleProdBrwsProdInfoBrwsInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  // --- API Group 3.2: 상품 브랜드 코드 조회 API ---
+  /**
+   * 상품 브랜드 코드 조회
+   * @param {string} prodAttrCd 상품속성코드
+   * @param {string} cretAmndDvCd 생성수정구분코드
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} chrplnNtytSaleYn 전세기실체판매여부 (Y/N)
+   */
+  retrieveBrandCodeBySaleProductCode: async ({ prodAttrCd, cretAmndDvCd, saleProdCd, chrplnNtytSaleYn }) => {
+    const functionName = "retrieveBrandCodeBySaleProductCode";
+    const params = { prodAttrCd, cretAmndDvCd, saleProdCd, chrplnNtytSaleYn };
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify(params)}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsebassinfo/retrieveBrndCd/v1.00`;
+    const requestBody = {
+      saleProdBrwsComDtlQcInVo: {
+        prodAttrCd,
+        cretAmndDvCd,
+        saleProdCd,
+        chrplnNtytSaleYn,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
+
+  // --- API Group 3.3: 동일 항공 판매 상품 조회 API ---
+  /**
+   * 동일 항공 판매 상품 조회
+   * @param {string} saleProdCd 판매상품코드
+   * @param {string} depDay 출발일자 (YYYYMMDD)
+   */
+  retrieveSameAirInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+    const functionName = "retrieveSameAirInfomationBySaleProductCode";
+    const params = { saleProdCd, depDay };
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify(params)}`);
+    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodaiv/cbc/prodaivsacaivbscmgmt/retrieveSmdyAirSaleProd/v1.00`;
+    const requestBody = {
+      prodAivPpdPkgSlpdAirInvXQcInVo: {
+        saleProdCd,
+        depDay,
+      },
+    };
+    return await callApi(functionName, 'post', url, requestBody);
+  },
 };

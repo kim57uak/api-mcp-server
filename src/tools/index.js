@@ -10,6 +10,26 @@ import { retrievePackageProductClassificationCodeTool } from "./retrievePackageP
 import { retrievePackageProductPromotionCodeTool } from "./retrievePackageProductPromotionCodeTool.js";
 import { retrievePackageProductThemeCodeTool } from "./retrievePackageProductThemeCodeTool.js";
 
+// API Group 3.1 Tools
+import { retrieveProductBasicInfomationBySaleProductCodeTool } from "./retrieveProductBasicInfomationBySaleProductCode.js";
+import { retrieveProductAirInventoryInformationBySaleProductCodeTool } from "./retrieveProductAirInventoryInformationBySaleProductCode.js";
+import { retrieveProductFareInfomationBySaleProductCodeTool } from "./retrieveProductFareInfomationBySaleProductCode.js";
+import { retrieveProductTabBasicInfomationBySaleProductCodeTool } from "./retrieveProductTabBasicInfomationBySaleProductCode.js";
+import { retrieveAirLineInformationBySaleProductCodeTool } from "./retrieveAirLineInformationBySaleProductCode.js";
+import { retrieveHotelScheduleInformationBySaleProductCodeTool } from "./retrieveHotelScheduleInformationBySaleProductCode.js";
+import { retrieveSendingTermAndConditionsBySaleProductCodeTool } from "./retrieveSendingTermAndConditionsBySaleProductCode.js";
+import { retrieveOptionalTourBySaleProductCodeTool } from "./retrieveOptionalTourBySaleProductCode.js";
+import { retrieveExpenseInformationBySaleProductCodeTool } from "./retrieveExpenseInformationBySaleProductCode.js";
+import { retrieveInineraryInformationBySaleProductCodeTool } from "./retrieveInineraryInformationBySaleProductCode.js";
+import { retrieveRemarksInformationBySaleProductCodeTool } from "./retrieveRemarksInformationBySaleProductCode.js";
+
+// API Group 3.2 Tool
+import { retrieveBrandCodeBySaleProductCodeTool } from "./retrieveBrandCodeBySaleProductCode.js";
+
+// API Group 3.3 Tool
+import { retrieveSameAirInfomationBySaleProductCodeTool } from "./retrieveSameAirInfomationBySaleProductCode.js";
+
+
 export const tools = [
   {
     ...getSaleProductScheduleTool,
@@ -105,5 +125,60 @@ export const tools = [
   {
     ...retrievePackageProductThemeCodeTool,
     description: `패키지 상품의 모든 테마 코드를 조회합니다.`,
+  },
+  // --- API Group 3.1 Tools ---
+  {
+    ...retrieveProductBasicInfomationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 상품 기본 정보를 조회합니다.", // 기본 설명 사용 또는 상세화
+  },
+  {
+    ...retrieveProductAirInventoryInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 상품 항공 인벤토리 정보를 조회합니다.",
+  },
+  {
+    ...retrieveProductFareInfomationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 상품 요금 정보를 조회합니다.",
+  },
+  {
+    ...retrieveProductTabBasicInfomationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 상품 기본 탭 정보를 조회합니다.",
+  },
+  {
+    ...retrieveAirLineInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 항공 정보를 조회합니다.",
+  },
+  {
+    ...retrieveHotelScheduleInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 호텔 현지 일정 정보를 조회합니다.",
+  },
+  {
+    ...retrieveSendingTermAndConditionsBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 샌딩 약관 정보를 조회합니다.",
+  },
+  {
+    ...retrieveOptionalTourBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 선택 관광 정보를 조회합니다.",
+  },
+  {
+    ...retrieveExpenseInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 경비 정보를 조회합니다.",
+  },
+  {
+    ...retrieveInineraryInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 여정 정보를 조회합니다.",
+  },
+  {
+    ...retrieveRemarksInformationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 비고 정보를 조회합니다.",
+  },
+  // --- API Group 3.2 Tool ---
+  {
+    ...retrieveBrandCodeBySaleProductCodeTool,
+    // description: "상품 브랜드 코드를 조회합니다.",
+  },
+  // --- API Group 3.3 Tool ---
+  {
+    ...retrieveSameAirInfomationBySaleProductCodeTool,
+    // description: "판매상품코드와 출발일자를 사용하여 동일 항공 판매 상품 정보를 조회합니다.",
   },
 ];
