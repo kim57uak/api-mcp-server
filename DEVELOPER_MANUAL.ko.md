@@ -9,11 +9,21 @@
   - [3.2. 🛠️ `updateSaleProductSchedule` 도구 (`src/tools/updateSaleProductSchedule.js`)](#32-🛠️-updatesaleproductschedule-도구-srctoolsupdatesaleproductschedulejs)
   - [3.3. 🛠️ `getDetailCommonCodeByQuery` 도구 (`src/tools/getDetailCommonCodeByQuery.js`)](#33-🛠️-getDetailCommonCodeByQuery-도구-srctoolsgetDetailCommonCodeByQueryjs)
   - [3.4. 🛠️ `getBasicCommonCodeByQuery` 도구](#34-🛠️-getbasiccommoncodebyquery-도구)
+  - [3.5. 🛠️ `retrieveSaleProductInformation` 도구 (`src/tools/retrieveSaleProductInformation.js`)](#35-🛠️-retrievesaleproductinformation-도구-srctoolsretrievesaleproductinformationjs)
+  - [3.6. 🛠️ `getPackageProductInfo` 도구 (`src/tools/getPackageProductInfo.js`)](#36-🛠️-getpackageproductinfo-도구-srctoolsgetpackageproductinfojs)
+  - [3.7. 🛠️ `getPackageProductOptionalTourInfomation` 도구 (`src/tools/getPackageProductOptionalTourInfomation.js`)](#37-🛠️-getpackageproductoptionaltourinfomation-도구-srctoolsgetpackageproductoptionaltourinfomationjs)
+  - [3.8. 🛠️ `getPackageProductRulesAndTravelAlerts` 도구 (`src/tools/getPackageProductRulesAndTravelAlerts.js`)](#38-🛠️-getpackageproductrulesandtravelalerts-도구-srctoolsgetpackageproductrulesandtravelalertsjs)
+  - [3.9. 🛠️ `retrieveAreaCode` 도구 (`src/tools/retrieveAreaCode.js`)](#39-🛠️-retrieveareacode-도구-srctoolsretrieveareacodejs)
+  - [3.10. 🛠️ `retrievePackageProductClassificationCode` 도구 (`src/tools/retrievePackageProductClassificationCodeTool.js`)](#310-🛠️-retrievepackageproductclassificationcode-도구-srctoolsretrievepackageproductclassificationcodetooljs)
+  - [3.11. 🛠️ `retrievePackageProductPromotionCode` 도구 (`src/tools/retrievePackageProductPromotionCodeTool.js`)](#311-🛠️-retrievepackageproductpromotioncode-도구-srctoolsretrievepackageproductpromotioncodetooljs)
+  - [3.12. 🛠️ `retrievePackageProductThemeCode` 도구 (`src/tools/retrievePackageProductThemeCodeTool.js`)](#312-🛠️-retrievepackageproductthemecode-도구-srctoolsretrievepackageproductthemecodetooljs)
 - [4. ⚙️ 설정 관리](#4-⚙️-설정-관리)
 - [5. 💪 SOLID 원칙 적용](#5-💪-solid-원칙-적용)
 - [6. ✨ 새로운 MCP 도구 추가](#6-✨-새로운-mcp-도구-추가)
 - [7. 🚀 실행 및 테스트](#7-🚀-실행-및-테스트)
-- [8. 🌱 향후 개선 사항](#8-🌱-향후-개선-사항)
+- [8. 💡 일반적인 문제 해결](#8--일반적인-문제-해결)
+  - [8.1. 에이전트 초기화 오류](#81-에이전트-초기화-오류)
+- [9. 🌱 향후 개선 사항](#9-🌱-향후-개선-사항)
 
 이 문서는 **MCP 판매 상품 서버**의 아키텍처, 구성 요소 및 개발 가이드라인에 대한 자세한 개요를 제공합니다.
 
@@ -195,7 +205,7 @@ mcp-server/
     }
     ```
 
-### 3.5. 🛠️ `retrieveSaleProductInformation` 도구
+### 3.5. 🛠️ `retrieveSaleProductInformation` 도구 (`src/tools/retrieveSaleProductInformation.js`)
 
 *   🎯 **목적**:
     1건 이상의 판매상품정보를 조회하고 싶을 때 사용합니다.
@@ -263,6 +273,170 @@ mcp-server/
       "content": [{
         "type": "text",
         "text": "{\n  \"saleProductCode\": \"PROD789\",\n  \"reservationCode\": null,\n  \"startDate\": 20240101,\n  \"endDate\": 20241231,\n  \"productAttributeCode\": \"P\",\n  \"productAreaCode\": \"AA\",\n  \"saleProductName\": \"Bangkok Package\",\n  \"pageSize\": 10,\n  \"pageNumber\": 1,\n  \"totalRowCount\": null,\n  \"totalPageCount\": null,\n  \"saleProductList\": [\n    {\n      \"productName\": \"Amazing Bangkok Tour\",\n      \"details\": \"Explore the vibrant city of Bangkok with our exclusive package.\"\n    }\n  ],\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.6. 🛠️ `getPackageProductInfo` 도구 (`src/tools/getPackageProductInfo.js`)
+
+*   🎯 **목적**: `saleProductCode`를 사용하여 패키지 상품 정보를 조회합니다.
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    {
+      saleProductCode: z.string().min(1, { message: "saleProductCode는 필수입니다." })
+    }
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점과 `saleProductCode`를 기록합니다.
+    2.  `packageService.getPackageProductInfo({ saleProductCode })`를 호출합니다.
+    3.  서비스 결과에서 `cleanObject` (내부적으로 `stripHtml` 사용)를 통해 HTML 태그를 제거합니다.
+    4.  정리된 결과를 `createJsonResponse`를 사용하여 MCP용 표준 JSON 응답으로 포맷합니다.
+    5.  성공적인 완료 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"status\": \"success\",\n  \"data\": { /* 정리된 패키지 상품 정보 */ },\n  \"message\": \"Function getPackageProductInfoTool.handler executed successfully at YYYY-MM-DDTHH:mm:ss.sssZ with params: {\\\"saleProductCode\\\":\\\"YOUR_CODE\\\"}\",\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.7. 🛠️ `getPackageProductOptionalTourInfomation` 도구 (`src/tools/getPackageProductOptionalTourInfomation.js`)
+
+*   🎯 **목적**: `saleProductCode`를 사용하여 패키지 상품의 선택 관광 정보를 조회합니다.
+    *참고: 파일명에 "Information" 대신 "Infomation"이라는 오타가 있습니다.*
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    {
+      saleProductCode: z.string().min(1, { message: "saleProductCode는 필수입니다." })
+    }
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점과 `saleProductCode`를 기록합니다.
+    2.  `packageService.getPackageProductOptionalTourInfomation({ saleProductCode })`를 호출합니다.
+    3.  `cleanObject`를 통해 결과에서 HTML 태그를 제거합니다.
+    4.  `createJsonResponse`를 사용하여 응답을 포맷합니다.
+    5.  성공 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"status\": \"success\",\n  \"data\": { /* 정리된 선택 관광 정보 */ },\n  \"message\": \"Function getPackageProductOptionalTourInfomationTool.handler executed successfully at YYYY-MM-DDTHH:mm:ss.sssZ with params: {\\\"saleProductCode\\\":\\\"YOUR_CODE\\\"}\",\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.8. 🛠️ `getPackageProductRulesAndTravelAlerts` 도구 (`src/tools/getPackageProductRulesAndTravelAlerts.js`)
+
+*   🎯 **목적**: `saleProductCode`를 사용하여 패키지 상품의 약관, 유의사항, 여행경보 등을 조회합니다.
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    {
+      saleProductCode: z.string().min(1, { message: "saleProductCode는 필수입니다." })
+    }
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점과 `saleProductCode`를 기록합니다.
+    2.  `packageService.getPackageProductRulesAndTravelAlerts({ saleProductCode })`를 호출합니다.
+    3.  `cleanObject`를 사용하여 결과에서 HTML 태그를 제거합니다.
+    4.  `createJsonResponse`로 응답을 포맷합니다.
+    5.  성공 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"status\": \"success\",\n  \"data\": { /* 정리된 약관 및 여행 경보 */ },\n  \"message\": \"Function getPackageProductRulesAndTravelAlertsTool.handler executed successfully at YYYY-MM-DDTHH:mm:ss.sssZ with params: {\\\"saleProductCode\\\":\\\"YOUR_CODE\\\"}\",\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.9. 🛠️ `retrieveAreaCode` 도구 (`src/tools/retrieveAreaCode.js`)
+
+*   🎯 **목적**: 지역, 국가, 대륙에 대한 정보를 조회합니다. 예를 들어, 사용자 질의가 "동남아 지역 찾아줘"인 경우, 이 도구를 사용하여 관련 코드를 얻을 수 있습니다.
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    z.object({}) // 파라미터 없음
+    ```
+*   🧠 **핸들러 로직**:
+    1.  `packageService.retrieveAreaCode()`를 호출합니다.
+    2.  반환된 `areaCodeList`는 `cleanObject`에 의해 HTML 태그가 제거됩니다.
+    3.  `areaCodeList`와 `retrievedAt` 타임스탬프를 포함하는 JSON 문자열로 응답을 포맷합니다.
+    4.  오류 발생 시 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "{\n  \"areaCodeList\": [ /* 지역 코드 객체의 배열 */ ],\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+      }]
+    }
+    ```
+
+### 3.10. 🛠️ `retrievePackageProductClassificationCode` 도구 (`src/tools/retrievePackageProductClassificationCodeTool.js`)
+
+*   🎯 **목적**: OLS에서 상품 구분 코드('01') 리스트를 조회합니다. (상품구분 : 01 프로모션 : 02 테마 : 03)
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    z.object({}) // 입력 파라미터 없음
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점을 기록합니다.
+    2.  `packageService.retrievePackageProductClassificationCode()`를 호출합니다.
+    3.  결과를 MCP 콘텐츠용 JSON 문자열로 포맷합니다.
+    4.  성공 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "[ /* 분류 코드 객체 또는 문자열의 배열 */ ]"
+      }]
+    }
+    ```
+
+### 3.11. 🛠️ `retrievePackageProductPromotionCode` 도구 (`src/tools/retrievePackageProductPromotionCodeTool.js`)
+
+*   🎯 **목적**: OLS에서 프로모션 코드('02') 리스트를 조회합니다. (상품구분 : 01 프로모션 : 02 테마 : 03)
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    z.object({}) // 입력 파라미터 없음
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점을 기록합니다.
+    2.  `packageService.retrievePackageProductPromotionCode()`를 호출합니다.
+    3.  결과를 JSON 문자열로 포맷합니다.
+    4.  성공 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "[ /* 프로모션 코드 객체 또는 문자열의 배열 */ ]"
+      }]
+    }
+    ```
+
+### 3.12. 🛠️ `retrievePackageProductThemeCode` 도구 (`src/tools/retrievePackageProductThemeCodeTool.js`)
+
+*   🎯 **목적**: OLS에서 테마 코드('03') 리스트를 조회합니다. (상품구분 : 01 프로모션 : 02 테마 : 03)
+*   📥 **입력 스키마** (`zod`):
+    ```javascript
+    z.object({}) // 입력 파라미터 없음
+    ```
+*   🧠 **핸들러 로직**:
+    1.  실행 진입점을 기록합니다.
+    2.  `packageService.retrievePackageProductThemeCode()`를 호출합니다.
+    3.  결과를 JSON 문자열로 포맷합니다.
+    4.  성공 또는 오류를 기록합니다.
+*   ✅ **출력 (성공 예시 구조)**:
+    ```json
+    {
+      "content": [{
+        "type": "text",
+        "text": "[ /* 테마 코드 객체 또는 문자열의 배열 */ ]"
       }]
     }
     ```
@@ -385,10 +559,50 @@ mcp-server/
    ```
    `stdout`에서 JSON 출력을 관찰합니다.
 
-## 8. 🌱 향후 개선 사항
+## 8. 💡 일반적인 문제 해결
+
+### 8.1. 에이전트 초기화 오류
+
+다음과 유사한 오류 메시지가 발생하는 경우:
+`Error: Agent could not be initialized. Please check LLM configuration and API keys.`
+
+이는 일반적으로 언어 모델(LLM) 에이전트 설정 문제이며, 이 MCP 서버의 코드베이스 외부에 있지만 이 서버를 해당 에이전트와 통합하는 경우 관련이 있습니다.
+
+**일반적인 원인 및 해결 방법:**
+
+1.  **API 키 누락 또는 부정확:**
+    *   **확인:** LLM 서비스(예: OpenAI, Gemini, Anthropic)용 API 키가 올바르게 설정되었는지 확인합니다.
+    *   **해결책:** 키가 유효하고 만료되지 않았으며 수행하려는 작업에 필요한 권한이 있는지 확인합니다.
+
+2.  **환경 변수 미설정 또는 로드 실패:**
+    *   **확인:** API 키 및 기타 민감한 LLM 구성은 종종 환경 변수(예: `OPENAI_API_KEY`, `GEMINI_API_KEY`)를 통해 관리됩니다. 이러한 변수가 에이전트 또는 애플리케이션이 실행되는 환경에 설정되어 있는지 확인합니다.
+    *   **해결책:**
+        *   쉘에서 직접 환경 변수를 설정합니다:
+            ```bash
+            export YOUR_LLM_API_KEY="실제_API_키_여기에_입력"
+            ```
+        *   `.env` 파일을 사용하는 경우, 올바르게 포맷되었는지(예: `YOUR_LLM_API_KEY=실제_API_키_여기에_입력`) 그리고 애플리케이션이 이를 로드하도록 구성되었는지(예: Node.js에서 `dotenv`와 같은 라이브러리 사용) 확인합니다.
+        *   변수 이름이 LLM SDK 또는 에이전트 코드에서 예상하는 것과 일치하는지 확인합니다.
+
+3.  **LLM 서비스 구성 문제:**
+    *   **확인:** LLM 에이전트의 구성 코드를 검토합니다. 잘못된 모델 이름, 엔드포인트 URL 또는 기타 매개변수가 있을 수 있습니다.
+    *   **해결책:** 사용 중인 특정 LLM SDK 또는 라이브러리의 설명서를 참조하여 모든 구성 매개변수가 올바른지 확인합니다.
+
+4.  **네트워크 연결 또는 서비스 중단:**
+    *   **확인:** 서버 또는 개발 환경이 인터넷에 액세스할 수 있고 LLM 공급자의 API 엔드포인트에 도달할 수 있는지 확인합니다.
+    *   **해결책:** LLM 공급자의 상태 페이지에서 진행 중인 중단 또는 유지 관리가 있는지 확인합니다. 기본 네트워크 연결을 테스트합니다(예: API 도메인에 `ping` 또는 `curl` 사용).
+
+5.  **SDK/라이브러리 버전 문제:**
+    *   **확인:** 오래되었거나 호환되지 않는 버전의 LLM SDK 또는 관련 라이브러리로 인해 초기화 오류가 발생할 수 있습니다.
+    *   **해결책:** 호환되는 버전의 SDK를 사용하고 있는지 확인하고 필요한 경우 업데이트하며 릴리스 노트에서 주요 변경 사항을 확인합니다.
+
+이러한 단계로 문제가 해결되지 않으면 사용 중인 LLM 에이전트 또는 SDK의 특정 설명서를 참조하고 더 많은 컨텍스트를 제공할 수 있는 자세한 오류 로그를 확인하십시오.
+
+## 9. 🌱 향후 개선 사항
 
 *   💾 **데이터베이스 통합**: **`src/services/`**의 모의 서비스를 실제 데이터베이스 상호 작용으로 대체합니다.
 *   🧪 **단위 및 통합 테스트**: 포괄적인 테스트 스위트를 구현합니다.
 *   📊 **향상된 로깅**: 강력한 로깅 시스템(**`Winston`**, 파일/콘솔 출력)이 현재 마련되어 있지만, 향후 개선 사항에는 로그 관리 시스템에서 더 쉽게 구문 분석할 수 있는 구조화된 로깅 또는 구성/API를 통한 동적 로그 수준 변경이 포함될 수 있습니다.
 *   🛠️ **정교한 설정 관리**: **`serviceConfig.js`**가 일부 설정을 중앙 집중화하지만, 특히 민감한 데이터나 더 다양한 배포 환경을 위해 더 복잡한 애플리케이션의 경우 추가적인 외부화(예: 코드베이스 외부에서 완전히 관리되는 `.env` 파일 또는 전용 구성 서비스)를 탐색할 수 있습니다.
 *   ⚠️ **더 정교한 오류 처리**: 사용자 정의 오류 클래스, 더 세분화된 오류 코드를 도입합니다.
+*   🔧 **오타 수정**: `getPackageProductOptionalTourInfomation.js` 및 관련 참조를 `getPackageProductOptionalTourInformation.js`로 이름을 변경합니다.
