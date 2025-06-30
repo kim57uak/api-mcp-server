@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+import express from 'express';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createStdioTransport } from "./transports/stdioTransport.js"; // Import createStdioTransport
 import { tools } from "./tools/index.js"; // Import tools
@@ -18,10 +20,22 @@ async function main() {
   const transport = createStdioTransport(); // Use the factory function
   try {
     await server.connect(transport);
-    console.log("MCP Server connected via StdioTransport.");
+    logger.info("MCP Server connected via StdioTransport.");
+    // Keep the process alive so it doesn't exit prematurely
+    await new Promise(() => {});
   } catch (error) {
-    console.error("Failed to connect MCP Server:", error);
+    logger.error("Failed to connect MCP Server:", error);
+    process.exit(1);
   }
 }
 
-main();
+main()
+  .then(() => {
+    logger.info("MCP Server running and waiting for requests.");
+    // This promise never resolves, keeping the process alive.
+    return new Promise(() => {});
+  })
+  .catch((error) => {
+    logger.error("Failed to start MCP server:", error);
+    process.exit(1);
+  });
