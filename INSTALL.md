@@ -41,20 +41,36 @@ This document provides instructions on how to install and run the MCP Sale Produ
 
 ## Environment Configuration (Optional)
 
-The server can be configured using environment variables. For instance, the base URL for the package service API can be overridden by setting the `PKG_API_BASE_URL` environment variable. Other configurable variables can be found in `src/config/serviceConfig.js`.
+The server can be configured using environment variables to set the base URLs for various external APIs. This is useful for tailoring the server settings for different deployment environments (e.g., development, QA, production). The primary configurations are defined in `src/config/serviceConfig.js`, and the following environment variables can be used to override them:
 
-Example of setting an environment variable before running the server (Linux/macOS):
+*   `PKG_API_BASE_URL`: Sets the base URL for package-specific APIs (e.g., retrieving itineraries, optional tours). (Default: `http://pkgapiqa.hanatour.com:8082`)
+*   `PKG_OLS_BASE_URL`: Sets the base URL for OLS (Operation Link System) QA environment APIs (e.g., retrieving sales product information, area codes). (Default: `http://pkgolsqa.hanatour.com:8081`)
+*   `OLS_BASE_URL`: Sets the base URL for OLS development environment APIs (e.g., for product structure codes like classification, promotion, theme). (Default: `http://pkgolsdev.hanatour.com:8081`)
+*   `COMMON_OLS_BASE_URL`: Sets the base URL for common OLS APIs (e.g., for basic/detailed common codes). (Default: `http://comolsdev.hanatour.com:8081`)
+
+Example of setting environment variables before running the server:
+
+**Linux/macOS:**
 ```bash
-export PKG_API_BASE_URL=https://new.api.example.com
+export PKG_API_BASE_URL=https://custom.packageapi.example.com
+export PKG_OLS_BASE_URL=https://custom.olsqa.example.com
 node src/server.js
 ```
 
-For Windows:
+**Windows (Command Prompt):**
 ```bash
-set PKG_API_BASE_URL=https://new.api.example.com
+set PKG_API_BASE_URL=https://custom.packageapi.example.com
+set PKG_OLS_BASE_URL=https://custom.olsqa.example.com
 node src/server.js
 ```
-Consult the `src/config/serviceConfig.js` file for more details on configurable parts.
+
+**Windows (PowerShell):**
+```powershell
+$env:PKG_API_BASE_URL="https://custom.packageapi.example.com"
+$env:PKG_OLS_BASE_URL="https://custom.olsqa.example.com"
+node src/server.js
+```
+Consult the `src/config/serviceConfig.js` file for more details on all configurable environment variables and their default values.
 
 ## Stopping the Server
 

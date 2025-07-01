@@ -41,20 +41,34 @@
 
 ## 환경 설정 (선택 사항)
 
-서버는 환경 변수를 사용하여 설정할 수 있습니다. 예를 들어, 패키지 서비스 API의 기본 URL은 `PKG_API_BASE_URL` 환경 변수를 설정하여 재정의할 수 있습니다. 다른 설정 가능한 변수들은 `src/config/serviceConfig.js` 파일에서 찾을 수 있습니다.
+서버는 환경 변수를 사용하여 여러 외부 API의 기본 URL을 설정할 수 있습니다. 이는 다양한 배포 환경(개발, QA, 운영)에 맞게 서버 설정을 조정하는 데 유용합니다. 주요 설정은 `src/config/serviceConfig.js` 파일에 정의되어 있으며, 다음 환경 변수들을 통해 재정의할 수 있습니다:
+
+*   `PKG_API_BASE_URL`: 패키지 관련 특정 API(예: 일정표, 선택 관광 조회 등)의 기본 URL을 설정합니다. (기본값: `http://pkgapiqa.hanatour.com:8082`)
+*   `PKG_OLS_BASE_URL`: OLS(운영 연동 시스템) QA 환경 API(예: 판매 상품 정보, 지역 코드 조회 등)의 기본 URL을 설정합니다. (기본값: `http://pkgolsqa.hanatour.com:8081`)
+*   `OLS_BASE_URL`: OLS 개발 환경 API(예: 상품 구분/프로모션/테마 코드 조회 등)의 기본 URL을 설정합니다. (기본값: `http://pkgolsdev.hanatour.com:8081`)
+*   `COMMON_OLS_BASE_URL`: 공통 OLS API(예: 기본/상세 공통 코드 조회 등)의 기본 URL을 설정합니다. (기본값: `http://comolsdev.hanatour.com:8081`)
 
 서버 실행 전 환경 변수 설정 예시 (Linux/macOS):
 ```bash
-export PKG_API_BASE_URL=https://new.api.example.com
+export PKG_API_BASE_URL=https://custom.packageapi.example.com
+export PKG_OLS_BASE_URL=https://custom.olsqa.example.com
 node src/server.js
 ```
 
-Windows의 경우:
+Windows의 경우 (cmd):
 ```bash
-set PKG_API_BASE_URL=https://new.api.example.com
+set PKG_API_BASE_URL=https://custom.packageapi.example.com
+set PKG_OLS_BASE_URL=https://custom.olsqa.example.com
 node src/server.js
 ```
-설정 가능한 부분에 대한 자세한 내용은 `src/config/serviceConfig.js` 파일을 참조하십시오.
+
+Windows의 경우 (PowerShell):
+```powershell
+$env:PKG_API_BASE_URL="https://custom.packageapi.example.com"
+$env:PKG_OLS_BASE_URL="https://custom.olsqa.example.com"
+node src/server.js
+```
+모든 설정 가능한 환경 변수와 그 기본값에 대한 자세한 내용은 `src/config/serviceConfig.js` 파일을 참조하십시오.
 
 ## 서버 중지
 

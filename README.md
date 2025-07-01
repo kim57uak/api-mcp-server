@@ -8,10 +8,32 @@ A Node.js server implementing the Model Context Protocol (MCP) for managing trav
 ## ✨ Key Features
 
 - **Comprehensive MCP Toolset**: Supports a wide range of MCP functionalities, including:
-    - Retrieving and updating sales product schedules.
-    - Fetching detailed package product information, optional tours, rules, and travel alerts.
-    - Querying various common codes (basic, detail, area, classification, promotion, theme codes).
-    - Searching for sales products based on multiple criteria.
+    - **Travel Product Schedule Management**: Retrieve travel schedules (itineraries) using `saleProdCd` (`getSaleProductSchedule`). (Note: Schedule update functionality (`updateSaleProductSchedule`) may be for reference only.)
+    - **Product Information Retrieval**:
+        - Search for sales product listings based on multiple criteria (dates, region code, product name, attribute code, etc.) (`retrieveSaleProductInformation`).
+        - Fetch detailed information for individual package products by `saleProductCode` (`getPackageProductInfo`).
+        - Retrieve optional tour information for package products (`getPackageProductOptionalTourInformation`).
+        - Get important information like terms, precautions, and travel alerts for package products (`getPackageProductRulesAndTravelAlerts`).
+    - **Common Code Queries**:
+        - Query basic common codes based on user input (`getBasicCommonCodeByQuery`).
+        - Query detailed common codes based on user input or basic codes (`getDetailCommonCodeByQuery`).
+        - Retrieve lists of region, country, and continent codes (`retrieveAreaCode`).
+        - Retrieve lists of classification ('01'), promotion ('02'), and theme ('03') codes for package products (`retrievePackageProductClassificationCode`, `retrievePackageProductPromotionCode`, `retrievePackageProductThemeCode`).
+    - **Detailed Information Retrieval by Sales Product Code & Departure Date (API Group 3.1)**:
+        - Basic product information (`retrieveProductBasicInformationBySaleProductCode`)
+        - Product air inventory information (`retrieveProductAirInventoryInformationBySaleProductCode`)
+        - Product fare information (`retrieveProductFareInformationBySaleProductCode`)
+        - Basic tab information for product detail pages (`retrieveProductTabBasicInformationBySaleProductCode`)
+        - Airline and flight information (`retrieveAirLineInformationBySaleProductCode`)
+        - Hotel and local schedule information (`retrieveHotelScheduleInformationBySaleProductCode`)
+        - Sending terms and conditions (`retrieveSendingTermAndConditionsBySaleProductCode`)
+        - Optional tour details (`retrieveOptionalTourBySaleProductCode`)
+        - Expense details (`retrieveExpenseInformationBySaleProductCode`)
+        - Full itinerary details (`retrieveItineraryInformationBySaleProductCode`)
+        - Remarks and notes (`retrieveRemarksInformationBySaleProductCode`)
+    - **Additional Product Information**:
+        - Retrieve product brand codes (`retrieveBrandCodeBySaleProductCode` - API Group 3.2).
+        - Find sales products using the same flight information (`retrieveSameAirInformationBySaleProductCode` - API Group 3.3).
 - **Configurable Service Layer**: Leverages `serviceConfig.js` for managing API endpoints and parameters, allowing for easy customization and extension.
 - **Structured Logging**: Utilizes Winston to provide detailed and organized logs for monitoring and debugging.
 - **SOLID Design Principles**: Developed with a focus on maintainability and scalability.
