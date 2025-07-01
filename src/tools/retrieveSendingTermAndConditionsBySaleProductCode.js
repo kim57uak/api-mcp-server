@@ -8,18 +8,18 @@ export const retrieveSendingTermAndConditionsBySaleProductCodeTool = {
   name: "retrieveSendingTermAndConditionsBySaleProductCode",
   description: "판매상품코드와 출발일자를 사용하여 샌딩 약관 정보를 조회합니다.",
   inputSchema: {
-    saleProdCd: z.string().min(1, { message: "saleProdCd is required." }).describe("판매상품코드"),
-    depDay: z.string().regex(/^\d{8}$/, "YYYYMMDD 형식이어야 합니다.").min(1, { message: "depDay is required." }).describe("출발일자 (YYYYMMDD)")
+    saleProductCode: z.string().min(1, { message: "saleProdCd is required." }).describe("판매상품코드"),
+    departureDay: z.string().regex(/^\d{8}$/, "YYYYMMDD 형식이어야 합니다.").min(1, { message: "departureDay is required." }).describe("출발일자 (YYYYMMDD)")
   },
-  async handler({ saleProdCd, depDay }) {
+  async handler({ saleProductCode, departureDay }) {
     const functionName = "retrieveSendingTermAndConditionsBySaleProductCodeTool.handler";
     logger.info(
-      `Executing ${functionName} with saleProdCd: ${saleProdCd}, depDay: ${depDay}`
+      `Executing ${functionName} with saleProdCd: ${saleProductCode}, departureDay: ${departureDay}`
     );
     try {
       const result = await packageService.retrieveSendingTermAndConditionsBySaleProductCode({
-        saleProdCd,
-        depDay,
+        saleProductCode,
+        departureDay,
       });
       logger.info(
         `${functionName} execution completed successfully.`

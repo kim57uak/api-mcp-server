@@ -237,17 +237,17 @@ export const packageService = {
   // --- API Group 3.1: 상품 기본 정보 및 관련 정보 조회 ---
   /**
    * 상품 기본 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveProductBasicInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveProductBasicInfomationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveProductBasicInfomationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdBscInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdBscInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -255,17 +255,17 @@ export const packageService = {
 
   /**
    * 상품 항공 인벤토리 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveProductAirInventoryInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveProductAirInventoryInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveProductAirInventoryInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdAivInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdAivInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -273,17 +273,17 @@ export const packageService = {
 
   /**
    * 상품 요금 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveProductFareInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveProductFareInfomationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveProductFareInfomationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdFareTpgInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveProdFareTpgInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -291,17 +291,17 @@ export const packageService = {
 
   /**
    * 기본 정보 조회 (상품 탭)
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveProductTabBasicInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveProductTabBasicInfomationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveProductTabBasicInfomationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveTpgBscInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveTpgBscInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -309,17 +309,17 @@ export const packageService = {
 
   /**
    * 항공 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveAirLineInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveAirLineInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveAirLineInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHgrsInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHgrsInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -327,17 +327,17 @@ export const packageService = {
 
   /**
    * 호텔 현지 일정 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveHotelScheduleInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveHotelScheduleInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveHotelScheduleInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHtlSchdInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveHtlSchdInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -345,17 +345,17 @@ export const packageService = {
 
   /**
    * 샌딩 약관 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveSendingTermAndConditionsBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveSendingTermAndConditionsBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveSendingTermAndConditionsBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSndgStplInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveSndgStplInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -363,17 +363,17 @@ export const packageService = {
 
   /**
    * 선택 관광 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveOptionalTourBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveOptionalTourBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveOptionalTourBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveChssTabInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveChssTabInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -381,17 +381,17 @@ export const packageService = {
 
   /**
    * 경비 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveExpenseInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveExpenseInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveExpenseInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveExpnTabInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveExpnTabInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -399,17 +399,17 @@ export const packageService = {
 
   /**
    * 여정 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveInineraryInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveInineraryInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveInineraryInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveItnrTabInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveItnrTabInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -417,17 +417,17 @@ export const packageService = {
 
   /**
    * 비고 정보 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveRemarksInformationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveRemarksInformationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveRemarksInformationBySaleProductCode";
-    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProdCd, depDay })}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveRmkTabInfo/v1.00`;
+    logger.info(`Executing ${functionName} with params: ${JSON.stringify({ saleProductCode, departureDay })}`);
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsexus/retrieveRmkTabInfo/v1.00`;
     const requestBody = {
       saleProdBrwsProdInfoBrwsInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -436,22 +436,22 @@ export const packageService = {
   // --- API Group 3.2: 상품 브랜드 코드 조회 API ---
   /**
    * 상품 브랜드 코드 조회
-   * @param {string} prodAttrCd 상품속성코드
-   * @param {string} cretAmndDvCd 생성수정구분코드
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} chrplnNtytSaleYn 전세기실체판매여부 (Y/N)
+   * @param {string} productAttributeCode 상품속성코드
+   * @param {string} createdModifiedCode 생성수정구분코드
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} charterSaleYn 전세기실체판매여부 (Y/N)
    */
-  retrieveBrandCodeBySaleProductCode: async ({ prodAttrCd, cretAmndDvCd, saleProdCd, chrplnNtytSaleYn }) => {
+  retrieveBrandCodeBySaleProductCode: async ({ productAttributeCode, createdModifiedCode, saleProductCode, charterSaleYn }) => {
     const functionName = "retrieveBrandCodeBySaleProductCode";
-    const params = { prodAttrCd, cretAmndDvCd, saleProdCd, chrplnNtytSaleYn };
+    const params = { productAttributeCode, createdModifiedCode, saleProductCode, charterSaleYn };
     logger.info(`Executing ${functionName} with params: ${JSON.stringify(params)}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsebassinfo/retrieveBrndCd/v1.00`;
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodbrws/cbc/saleprodbrwsebassinfo/retrieveBrndCd/v1.00`;
     const requestBody = {
       saleProdBrwsComDtlQcInVo: {
-        prodAttrCd,
-        cretAmndDvCd,
-        saleProdCd,
-        chrplnNtytSaleYn,
+        prodAttrCd : productAttributeCode,
+        cretAmndDvCd : createdModifiedCode,
+        saleProdCd : saleProductCode,
+        chrplnNtytSaleYn : charterSaleYn,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
@@ -460,18 +460,18 @@ export const packageService = {
   // --- API Group 3.3: 동일 항공 판매 상품 조회 API ---
   /**
    * 동일 항공 판매 상품 조회
-   * @param {string} saleProdCd 판매상품코드
-   * @param {string} depDay 출발일자 (YYYYMMDD)
+   * @param {string} saleProductCode 판매상품코드
+   * @param {string} departureDay 출발일자 (YYYYMMDD)
    */
-  retrieveSameAirInfomationBySaleProductCode: async ({ saleProdCd, depDay }) => {
+  retrieveSameAirInfomationBySaleProductCode: async ({ saleProductCode, departureDay }) => {
     const functionName = "retrieveSameAirInfomationBySaleProductCode";
-    const params = { saleProdCd, depDay };
+    const params = { saleProductCode, departureDay };
     logger.info(`Executing ${functionName} with params: ${JSON.stringify(params)}`);
-    const url = `${apiUrls.olsQaBase}/pkg/ols/product/saleprodmgmt/saleprodaiv/cbc/prodaivsacaivbscmgmt/retrieveSmdyAirSaleProd/v1.00`;
+    const url = `${apiUrls.olsQaBase}/pkg/api/ols/product/saleprodmgmt/saleprodaiv/cbc/prodaivsacaivbscmgmt/retrieveSmdyAirSaleProd/v1.00`;
     const requestBody = {
       prodAivPpdPkgSlpdAirInvXQcInVo: {
-        saleProdCd,
-        depDay,
+        saleProdCd : saleProductCode,
+        depDay : departureDay,
       },
     };
     return await callApi(functionName, 'post', url, requestBody);
