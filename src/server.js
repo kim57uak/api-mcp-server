@@ -5,18 +5,20 @@ import { tools } from "./tools/index.js"; // Import tools
 import logger from "./utils/logger.cjs";
 
 async function main() {
+  logger.info("Failed to connect MCP Server: 1");
   const server = new McpServer({
     name: "MCP HNT Package Sale Product Server",
     version: "1.0.0",
   });
-
+  logger.info("Failed to connect MCP Server: 2");
   // Register tools
   tools.forEach((tool) => {
     server.tool(tool.name, tool.description, tool.inputSchema, tool.handler);
     logger.info(`Registered tool: ${tool.name}`);
   });
-
+  logger.info("Failed to connect MCP Server: 3");
   const transport = createStdioTransport(); // Use the factory function
+  logger.info("Failed to connect MCP Server: 4");
   try {
     await server.connect(transport);
     logger.info("MCP Server connected via StdioTransport.");
