@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import express from 'express';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createStdioTransport } from "./transports/stdioTransport.js"; // Import createStdioTransport
 import { tools } from "./tools/index.js"; // Import tools
