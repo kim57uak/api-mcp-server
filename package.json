@@ -5,7 +5,7 @@
   "description": "A CLI tool for hnt Api",
   "main": "src/server.js",
   "bin": {
-    "search-mcp-server": "src/server.js"
+    "api-mcp-server": "src/server.js"
   },
   "scripts": {
     "start": "node src/server.js",
