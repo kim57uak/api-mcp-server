@@ -52,13 +52,13 @@ export const retrieveSaleProductInformationTool = {
       .optional()
       .describe("특정 예약과 관련된 상품을 조회할 때 사용하는 코드입니다."),
     startDate: z
-      .number()
+      .string()
       .min(1)
       .describe(
         "상품 검색을 위한 시작 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."
       ), // 필수값
     endDate: z
-      .number()
+      .string()
       .min(1)
       .describe(
         "상품 검색을 위한 종료 날짜 (YYYYMMDD 형식) 입니다. 필수 항목입니다."
@@ -69,7 +69,7 @@ export const retrieveSaleProductInformationTool = {
       .describe("영문 1자리 상품속성코드입니다."), // 선택값
     productAreaCode: z
       .string()
-      .optional()
+      .min(1)
       .describe("영문과 숫자가 조합된 2자리 지역코드를 입력해야합니다."), // 필수값
     saleProductName: z
       .string()
