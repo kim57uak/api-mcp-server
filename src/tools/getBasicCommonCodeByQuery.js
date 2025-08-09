@@ -4,6 +4,7 @@ import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
 import { cleanObject } from "../utils/objectUtils.js";
 import { createJsonResponse } from "../utils/responseUtils.js";
+import { includeFields } from "../utils/responseFilter.js";
 
 export const getBasicCommonCodeByQueryTool = {
   name: "getBasicCommonCodeByQuery",
@@ -19,6 +20,13 @@ export const getBasicCommonCodeByQueryTool = {
     logger.info(`Basic Query: ${query}`);
     try {
       const result = await packageService.getBasicCommonCodeByQuery(query);
+      
+      // 필요한 필드만 필터링
+      const fieldsToInclude = ['comBscCd', 'comBscCdNm','useYn'];
+      if (result.data && result.data.comBscCdVo) {
+        result.data.comBscCdVo = includeFields(result.data.comBscCdVo, fieldsToInclude);
+      }
+      
       // result 내 모든 문자열에서 html 태그 제거
       const cleanedResult = cleanObject(result);
       return createJsonResponse(functionName, cleanedResult, logger);

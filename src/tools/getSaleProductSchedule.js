@@ -5,6 +5,7 @@ import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
 import { cleanObject } from "../utils/objectUtils.js";
 import { createJsonResponse } from "../utils/responseUtils.js";
+import { includeFields } from "../utils/responseFilter.js";
 
 export const getSaleProductScheduleTool = {
   name: "getSaleProductSchedule",
@@ -25,8 +26,44 @@ export const getSaleProductScheduleTool = {
         `Executing getSaleProductSchedule tool for saleProdCd: ${saleProdCd}`
       );
       const schedules = await packageService.getSchedules(saleProdCd);
-      // schedules 내 모든 문자열에서 html 태그 제거
-      const cleanedSchedules = cleanObject(schedules);
+      
+      // 필요한 필드만 필터링
+      let filteredSchedules = {};
+      
+      // meetInfoBcVo 필드 필터링
+      if (schedules?.meetInfoBcVo) {
+        filteredSchedules.meetInfoBcVo = includeFields(schedules.meetInfoBcVo, 
+          ['sndgMeetDt', 'sndgMeetTm', 'aptCd']);
+      }
+      
+      // schdInfoList 필드 필터링
+      if (schedules?.schdInfoList) {
+        filteredSchedules.schdInfoList = schedules.schdInfoList.map(item => {
+          const filteredItem = includeFields(item, ['schdDay', 'strtDt', 'strDow']);
+          
+          // schdMainInfoList 필드 필터링
+          if (item?.schdMainInfoList) {
+            filteredItem.schdMainInfoList = item.schdMainInfoList.map(subItem => 
+              includeFields(subItem, ['schtExprSqc', 'schdCatgNm', 'depCityCd', 'arrCityCd', 'schdDay', 'memoTitlNm', 'dtlMealDvNm', 'mealTypeNm', 'cardCntntPc']));
+          }
+          
+          return filteredItem;
+        });
+      }
+      
+      // htlInfoList 필드 필터링
+      if (schedules?.htlInfoList) {
+        filteredSchedules.htlInfoList = schedules.htlInfoList.map(item => 
+          includeFields(item, ['schdDay', 'htlSeq', 'htlFixYn', 'htlKoNm', 'htlAplcLangNm', 'enAdrs', 'mainTel', 'faxnVal', 'hmpgUrlAdrs', 'locaDesc']));
+      }
+      
+      // pkgAirSeqList 필드 필터링
+      if (schedules?.pkgAirSeqList) {
+        filteredSchedules.pkgAirSeqList = schedules.pkgAirSeqList.map(item => 
+          includeFields(item, ['airlCd', 'airlNm', 'flgtNm', 'depHm', 'arrHm', 'arrAptCd', 'arrAptNm', 'arrAptCityNm', 'depAptCd', 'depAptNm', 'depAptCityNm']));
+      }
+      
+      const cleanedSchedules = cleanObject(filteredSchedules);
       const responseData = {
         saleProdCd: saleProdCd,
         schedules: cleanedSchedules,

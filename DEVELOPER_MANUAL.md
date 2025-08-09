@@ -34,11 +34,16 @@
     - [3.25. 🛠️ `updateSaleProductSchedule` Tool (For Reference)](#325-️-updatesaleproductschedule-tool-for-reference)
   - [4. ⚙️ Configuration Management](#4-️-configuration-management)
   - [5. 💪 SOLID Principles Application](#5--solid-principles-application)
-  - [6. ✨ Adding a New MCP Tool](#6--adding-a-new-mcp-tool)
-  - [7. 🚀 Running and Testing](#7--running-and-testing)
-  - [8. 💡 Troubleshooting Common Issues](#8--troubleshooting-common-issues)
-    - [8.1. Agent Initialization Error](#81-agent-initialization-error)
-  - [9. 🌱 Future Enhancements](#9--future-enhancements)
+  - [6. 🔧 Response Optimization with includeFields](#6--response-optimization-with-includefields)
+    - [6.1. 🎯 Purpose and Benefits](#61--purpose-and-benefits)
+    - [6.2. 🛠️ Implementation Guide](#62-️-implementation-guide)
+    - [6.3. 📝 Example Implementation](#63--example-implementation)
+    - [6.4. 🔍 Best Practices](#64--best-practices)
+  - [7. ✨ Adding a New MCP Tool](#7--adding-a-new-mcp-tool)
+  - [8. 🚀 Running and Testing](#8--running-and-testing)
+  - [9. 💡 Troubleshooting Common Issues](#9--troubleshooting-common-issues)
+    - [9.1. Agent Initialization Error](#91-agent-initialization-error)
+  - [10. 🌱 Future Enhancements](#10--future-enhancements)
 
 This document provides a detailed overview of the **MCP Sale Product Server's** architecture, components, and development guidelines.
 
@@ -147,13 +152,13 @@ Each tool generally follows this structure:
 ### 3.1. 🛠️ `getSaleProductSchedule` Tool
 
 *   📁 **File**: `src/tools/getSaleProductSchedule.js`
-*   🎯 **Purpose**: Retrieves the travel schedule (itinerary) information for a given `saleProdCd` (sales product code).
+*   🎯 **Purpose**: Retrieves the travel schedule (itinerary) information for a given `saleProdCd` (sales product code). **This tool implements field filtering using `includeFields` to optimize response size and performance.**
     *   The response includes:
-        *   `schdInfoList` -> `schdMainInfoList[]`: A list of main travel schedule information for each day.
-        *   `schdInfoList` -> `schdMainInfoList[]` -> `schdDay`: Details for each day of the tour (e.g., Day 1, Day 2). This can be used to determine the total duration of the trip.
-        *   `schdInfoList` -> `schdMainInfoList[]` -> (sub-items): Daily hotel information list.
-        *   `pkgAirSeqList`: Detailed information about the flights included in the product.
-    *   (Original description from `src/tools/index.js`: "판매상품코드(saleProdCd) 1개를 사용하여 여행스케줄(일정표) 정보를 조회합니다. 조회 결과에는 다음 정보가 포함됩니다: `schdInfoList` -> `schdMainInfoList[]`: 일별 주요 여행 일정 정보 리스트. `schdInfoList` -> `schdMainInfoList[]` -> `schdDay`: 각 일차별(예: 1일차, 2일차) 상세 내용이 반복됩니다. 이 정보를 통해 여행의 총 일차(최소 및 최대 일차)를 파악할 수 있습니다. `schdInfoList` -> `schdMainInfoList[]` -> (하위 항목): 일별 호텔 정보 리스트. `pkgAirSeqList`: 상품에 포함된 항공편에 대한 상세 정보.")
+        *   `meetInfoBcVo`: Meeting information with filtered fields (`sndgMeetDt`, `sndgMeetTm`, `aptCd`)
+        *   `schdInfoList`: Schedule information with filtered fields (`schdDay`, `strtDt`, `strDow`)
+        *   `schdMainInfoList`: Main schedule details with filtered fields (`schtExprSqc`, `schdCatgNm`, `depCityCd`, `arrCityCd`, `schdDay`, `memoTitlNm`, `dtlMealDvNm`, `mealTypeNm`, `cardCntntPc`)
+        *   `htlInfoList`: Hotel information with filtered fields (`schdDay`, `htlSeq`, `htlFixYn`, `htlKoNm`, `htlAplcLangNm`, `enAdrs`, `mainTel`, `faxnVal`, `hmpgUrlAdrs`, `locaDesc`)
+        *   `pkgAirSeqList`: Flight information with filtered fields (`airlCd`, `airlNm`, `flgtNm`, `depHm`, `arrHm`, `arrAptCd`, `arrAptNm`, `arrAptCityNm`, `depAptCd`, `depAptNm`, `depAptCityNm`)
 *   📥 **Input Schema**:
     | Parameter    | Type   | Required | Description             |
     | :----------- | :----- | :------- | :---------------------- |
@@ -162,22 +167,58 @@ Each tool generally follows this structure:
     1.  Receives `saleProdCd` as input.
     2.  Calls `packageService.getSchedules(saleProdCd)`.
     3.  `packageService.getSchedules` internally makes a POST request to the `/pkg/api/common/pkgcomprod/getPkgProdItnrInfo/v1.00` endpoint at the URL defined in `apiUrls.packageApiBase`.
-    4.  Cleans the service response using `cleanObject`.
-    5.  Generates the final response using `createJsonResponse`, including the cleaned schedule data, `saleProdCd`, and a `retrievedAt` timestamp.
+    4.  **Applies `includeFields` filtering** to optimize the response by including only necessary fields for each data structure.
+    5.  Cleans the filtered response using `cleanObject`.
+    6.  Generates the final response using `createJsonResponse`, including the cleaned schedule data, `saleProdCd`, and a `retrievedAt` timestamp.
 *   ✅ **Output (Success Example)**:
     ```json
     {
       "content": [{
         "type": "text",
         "text": { // JSON object stringified by createJsonResponse
-          "status": "success", // or "error"
+          "status": "success",
           "data": {
-            "saleProdCd": "ALLLSLSLSL",
-            "schedules": { /* cleaned schedule information object */ },
+            "saleProdCd": "AAA1982001287C0",
+            "schedules": {
+              "meetInfoBcVo": {
+                "sndgMeetDt": "20200128",
+                "sndgMeetTm": "0345",
+                "aptCd": "ICN"
+              },
+              "schdInfoList": [
+                {
+                  "schdDay": 1,
+                  "strtDt": "20200128",
+                  "strDow": "화",
+                  "schdMainInfoList": [
+                    {
+                      "schtExprSqc": 1,
+                      "schdCatgNm": "관광지",
+                      "schdDay": 1
+                    }
+                  ]
+                }
+              ],
+              "pkgAirSeqList": [
+                {
+                  "airlCd": "7C",
+                  "airlNm": "제주항공",
+                  "flgtNm": "2201",
+                  "depHm": "0615",
+                  "arrHm": "1105",
+                  "arrAptCd": "BKK",
+                  "arrAptNm": "수완나품 공항",
+                  "arrAptCityNm": "방콕",
+                  "depAptCd": "ICN",
+                  "depAptNm": "인천 국제공항",
+                  "depAptCityNm": "서울"
+                }
+              ]
+            },
             "retrievedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
           },
-          "message": "Function getSaleProductScheduleTool.handler executed successfully...", // Success or error message
-          "retrievedAt": "YYYY-MM-DDTHH:mm:ss.sssZ" // Timestamp from createJsonResponse
+          "message": "Function getSaleProductScheduleTool.handler executed successfully...",
+          "retrievedAt": "YYYY-MM-DDTHH:mm:ss.sssZ"
         }
       }]
     }
@@ -1392,20 +1433,20 @@ Each tool generally follows this structure:
 ### 3.5. 🛠️ `retrieveAreaCode` Tool
 
 *   📁 **File**: `src/tools/retrieveAreaCode.js`
-*   🎯 **Purpose**: Retrieves code information for regions, countries, and continents. For example, if a user query is "Find Southeast Asia region", this tool can be used to get the relevant codes, which can then be used as the `productAreaCode` parameter in other tools (e.g., `retrieveSaleProductInformation`).
-    *   (Description from `src/tools/index.js` - translated: "Retrieves information about regions, countries, and continents. Example: If the query is 'Find Southeast Asia region', execute this function, check the results, and select the code corresponding to Southeast Asia.")
+*   🎯 **Purpose**: Retrieves code information for regions, countries, and continents. **This tool implements field filtering using `includeFields` to return only essential fields (`code`, `codeNm`) for optimal performance.**
 *   📥 **Input Schema**: No parameters (`z.object({})`).
 *   🧠 **Handler Logic**:
     1.  Calls `packageService.retrieveAreaCode()`.
     2.  `packageService.retrieveAreaCode` internally makes a POST request to the `/pkg/api/gnis/common/cbc/compkgarea/getComPkgAreaCboListForProduct/v1.00` endpoint at the URL defined in `apiUrls.olsQaBase`.
-    3.  Cleans the service response (likely containing `areaCodeList`) using `cleanObject`.
-    4.  Formats the response as a JSON string including the cleaned data and a `retrievedAt` timestamp. (Note: This tool directly constructs the response JSON string, not using `createJsonResponse`.)
+    3.  **Applies `includeFields` filtering** to include only `code` and `codeNm` fields from the `comPkgAreaCQcVoList`.
+    4.  Cleans the filtered response using `cleanObject`.
+    5.  Formats the response as a JSON string including the cleaned data and a `retrievedAt` timestamp.
 *   ✅ **Output (Success Example)**:
     ```json
     {
       "content": [{
         "type": "text",
-        "text": "{\n  \"areaCodeList\": [ /* Cleaned array of area code objects */ ],\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
+        "text": "{\n  \"areaCodeList\": {\n    \"comPkgAreaCQcVoList\": [\n      {\n        \"code\": \"A0\",\n        \"codeNm\": \"동남아\"\n      },\n      {\n        \"code\": \"C1\",\n        \"codeNm\": \"중국\"\n      }\n    ]\n  },\n  \"retrievedAt\": \"YYYY-MM-DDTHH:mm:ss.sssZ\"\n}"
       }]
     }
     ```
@@ -1638,7 +1679,160 @@ The server architecture aims to adhere to **SOLID principles** to enhance mainta
     *   High-level modules (tool handlers) depend on abstractions (the interface of `packageService`) rather than concrete low-level implementations directly. `packageService` itself depends on abstractions for API calls (`apiUtils.js`) and configurations (`serviceConfig.js`).
     *   `server.js` depends on the `createStdioTransport` factory function (an abstraction) rather than directly instantiating `StdioServerTransport`. This promotes loose coupling and makes it easier to introduce different transport mechanisms or service implementations in the future.
 
-## 6. ✨ Adding a New MCP Tool
+## 6. 🔧 Response Optimization with includeFields
+
+### 6.1. 🎯 Purpose and Benefits
+
+The `includeFields` utility is a powerful feature designed to optimize API responses by filtering out unnecessary data fields. This approach provides several key benefits:
+
+*   **🚀 Performance Improvement**: Reduces response payload size, leading to faster data transmission and processing
+*   **💰 Bandwidth Optimization**: Minimizes network usage by excluding unused fields
+*   **🔍 Focused Data**: Returns only relevant information, making responses easier to parse and understand
+*   **🔒 Security Enhancement**: Prevents accidental exposure of sensitive or internal fields
+*   **🧠 Memory Efficiency**: Reduces memory consumption in both server and client applications
+
+### 6.2. 🛠️ Implementation Guide
+
+The `includeFields` function is located in `src/utils/responseFilter.js` and can be applied to any API response data structure.
+
+**Basic Usage Pattern:**
+```javascript
+import { includeFields } from '../utils/responseFilter.js';
+
+// Filter a single object
+const filteredObject = includeFields(originalObject, ['field1', 'field2', 'field3']);
+
+// Filter an array of objects
+const filteredArray = originalArray.map(item => 
+  includeFields(item, ['field1', 'field2'])
+);
+```
+
+**Advanced Nested Filtering:**
+```javascript
+// Handle nested structures
+if (response?.nestedList) {
+  response.nestedList = response.nestedList.map(item => {
+    const filteredItem = includeFields(item, ['mainField1', 'mainField2']);
+    
+    // Filter nested sub-arrays
+    if (item?.subList) {
+      filteredItem.subList = item.subList.map(subItem => 
+        includeFields(subItem, ['subField1', 'subField2'])
+      );
+    }
+    
+    return filteredItem;
+  });
+}
+```
+
+### 6.3. 📝 Example Implementation
+
+Here's how `includeFields` is implemented in the `getSaleProductSchedule` tool:
+
+```javascript
+// src/tools/getSaleProductSchedule.js
+import { includeFields } from "../utils/responseFilter.js";
+
+export const getSaleProductScheduleTool = {
+  // ... tool definition
+  async handler({ saleProdCd }) {
+    try {
+      const schedules = await packageService.getSchedules(saleProdCd);
+      
+      // Create filtered response object
+      let filteredSchedules = {};
+      
+      // Filter meeting information
+      if (schedules?.meetInfoBcVo) {
+        filteredSchedules.meetInfoBcVo = includeFields(schedules.meetInfoBcVo, 
+          ['sndgMeetDt', 'sndgMeetTm', 'aptCd']);
+      }
+      
+      // Filter schedule information with nested filtering
+      if (schedules?.schdInfoList) {
+        filteredSchedules.schdInfoList = schedules.schdInfoList.map(item => {
+          const filteredItem = includeFields(item, ['schdDay', 'strtDt', 'strDow']);
+          
+          // Filter nested main schedule information
+          if (item?.schdMainInfoList) {
+            filteredItem.schdMainInfoList = item.schdMainInfoList.map(subItem => 
+              includeFields(subItem, [
+                'schtExprSqc', 'schdCatgNm', 'depCityCd', 'arrCityCd', 
+                'schdDay', 'memoTitlNm', 'dtlMealDvNm', 'mealTypeNm', 'cardCntntPc'
+              ])
+            );
+          }
+          
+          return filteredItem;
+        });
+      }
+      
+      // Filter hotel information
+      if (schedules?.htlInfoList) {
+        filteredSchedules.htlInfoList = schedules.htlInfoList.map(item => 
+          includeFields(item, [
+            'schdDay', 'htlSeq', 'htlFixYn', 'htlKoNm', 'htlAplcLangNm', 
+            'enAdrs', 'mainTel', 'faxnVal', 'hmpgUrlAdrs', 'locaDesc'
+          ])
+        );
+      }
+      
+      // Filter flight information
+      if (schedules?.pkgAirSeqList) {
+        filteredSchedules.pkgAirSeqList = schedules.pkgAirSeqList.map(item => 
+          includeFields(item, [
+            'airlCd', 'airlNm', 'flgtNm', 'depHm', 'arrHm', 
+            'arrAptCd', 'arrAptNm', 'arrAptCityNm', 
+            'depAptCd', 'depAptNm', 'depAptCityNm'
+          ])
+        );
+      }
+      
+      // Clean and return the filtered response
+      const cleanedSchedules = cleanObject(filteredSchedules);
+      return createJsonResponse(functionName, {
+        saleProdCd,
+        schedules: cleanedSchedules,
+        retrievedAt: new Date().toISOString()
+      }, logger);
+      
+    } catch (error) {
+      // Error handling...
+    }
+  }
+};
+```
+
+### 6.4. 🔍 Best Practices
+
+**1. Field Selection Strategy:**
+*   ✅ Include only fields that are actually used by client applications
+*   ✅ Prioritize essential business data over metadata or internal fields
+*   ✅ Consider the specific use case for each API endpoint
+
+**2. Documentation:**
+*   ✅ Document which fields are included and why
+*   ✅ Maintain a clear mapping between API endpoints and their filtered fields
+*   ✅ Update documentation when field requirements change
+
+**3. Testing:**
+*   ✅ Test filtered responses to ensure all necessary data is present
+*   ✅ Verify that filtering doesn't break dependent functionality
+*   ✅ Compare response sizes before and after filtering to measure improvements
+
+**4. Maintenance:**
+*   ✅ Regularly review and update field lists based on usage patterns
+*   ✅ Remove fields that are no longer needed
+*   ✅ Add new fields when business requirements change
+
+**5. Error Handling:**
+*   ✅ Ensure `includeFields` gracefully handles missing or null data
+*   ✅ Provide fallback behavior when expected fields are not present
+*   ✅ Log warnings when critical fields are missing from the source data
+
+## 7. ✨ Adding a New MCP Tool
 
 Follow these steps to add a new MCP tool to the server:
 

@@ -11,6 +11,7 @@ import {
 import { callApi } from '../utils/apiUtils.js';
 import { buildRetrieveSaleProductRequestBody } from './helpers/packageServiceHelpers.js';
 import { callPackageProductSpecificCodeService } from './helpers/packageProductSpecificCodeHelpers.js';
+import { includeFields } from '../utils/responseFilter.js';
 
 export const packageService = {
   getSchedules: async (saleProdCd) => {
@@ -128,7 +129,7 @@ export const packageService = {
     );
     return result;
   },
-  getPackageProductInfo: async ({ saleProductCode }) => {
+  getPackageProductInfo: async ({ saleProductCode, includeFields: fieldsToInclude = [] }) => {
     logger.info(
       `Executing getPackageProductInfo with saleProductCode: ${saleProductCode}`
     );
@@ -140,7 +141,8 @@ export const packageService = {
         langCode: defaultApiParams.commonCodeLang,
       },
     };
-    return await callApi('getPackageProductInfo', 'post', url, requestBody);
+    const response = await callApi('getPackageProductInfo', 'post', url, requestBody);
+    return includeFields(response, fieldsToInclude);
   },
   getPackageProductOptionalTourInfomation: async ({ saleProductCode }) => {
     logger.info(

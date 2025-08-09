@@ -10,6 +10,7 @@ import logger from "../utils/logger.cjs";
 import { stripHtml } from "../utils/stripHtml.js";
 import { cleanObject } from "../utils/objectUtils.js";
 import { createJsonResponse } from "../utils/responseUtils.js";
+import { includeFields } from "../utils/responseFilter.js";
 
 export const retrieveSaleProductInformationTool = {
   name: "retrieveSaleProductInformation",
@@ -142,8 +143,25 @@ export const retrieveSaleProductInformationTool = {
       const saleProductList =
         await packageService.retrieveSaleProductInformation(params);
 
+      // 필요한 필드만 필터링
+      const fieldsToInclude = [
+        'departureAirFlightCode', 'airportOfficeBuildingCounterCode', 'departureTime',
+        'dayOfTheWeek', 'saleProductCode', 'saleProductName', 'allProductPrice',
+        'departureCityCode', 'departureDay', 'arrivalDay', 'arrangementMainName',
+        'arrangementSubName', 'airMainName', 'merchandiserMainName', 'productAreaCode',
+        'productAttributeCode'
+      ];
+      
+      let filteredSaleProductList = saleProductList;
+      if (saleProductList && saleProductList.saleProductItemResponseList) {
+        filteredSaleProductList.saleProductItemResponseList = includeFields(
+          saleProductList.saleProductItemResponseList,
+          fieldsToInclude
+        );
+      }
+
       // saleProductList 내 모든 문자열에서 html 태그 제거
-      const cleanSaleProductList = cleanObject(saleProductList);
+      const cleanSaleProductList = cleanObject(filteredSaleProductList);
       const responseData = {
         // 기존 saleProdCd 외에 모든 파라미터 포함
         ...params,
