@@ -111,7 +111,7 @@ export const retrieveSaleProductInformationTool = {
       productAttributeCode,
       productAreaCode,
       saleProductName,
-      pageSize,
+      pageSize = 10,
       pageNumber,
       totalRowCount,
       totalPageCount,
