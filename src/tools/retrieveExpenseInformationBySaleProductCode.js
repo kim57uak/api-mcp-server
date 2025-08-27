@@ -9,9 +9,16 @@ export const retrieveExpenseInformationBySaleProductCodeTool = {
   description: "판매상품코드와 출발일자를 사용하여 경비 정보를 조회합니다.",
   inputSchema: {
     saleProductCode: z.string().min(1, { message: "saleProductCode is required." }).describe("판매상품코드"),
-    departureDay: z.string().regex(/^\d{8}$/, "YYYYMMDD 형식이어야 합니다.").min(1, { message: "departureDay is required." }).describe("출발일자 (YYYYMMDD)")
+    departureDay: z.string().regex(/^\d{8}$/, "YYYYMMDD 형식이어야 합니다.").optional().describe("출발일자 (YYYYMMDD)")
   },
   async handler({ saleProductCode, departureDay }) {
+    // departureDay가 없으면 saleProductCode에서 추출
+    if (!departureDay && saleProductCode.length >= 11) {
+      const substring = saleProductCode.substring(6, 12); // 5번째~11번째 자리 (0-based index)
+      departureDay = '20' + substring;
+      logger.info(`departureDay extracted from saleProductCode: ${departureDay}`);
+    }
+    
     const functionName = "retrieveExpenseInformationBySaleProductCodeTool.handler";
     logger.info(
       `Executing ${functionName} with saleProductCode: ${saleProductCode}, depDay: ${departureDay}`
